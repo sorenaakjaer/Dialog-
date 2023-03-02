@@ -1,3 +1,4 @@
+console.log('test');
 const params = new URLSearchParams(window.location.search)
 var version = params.get('VERSION')
 var random_id = new Date().valueOf();
