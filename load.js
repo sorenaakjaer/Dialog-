@@ -11,23 +11,23 @@ var v_js3 = external_path + 'server.js'; //+ '?' + random_id;
 var v_html = external_path +'main.html' + '?' + random_id;
 
 const Http = new XMLHttpRequest();
-Http.open("GET", external_path.replace('purge.','cdn.') + 'base-cbb.css');
+Http.open("GET", external_path.replace('cdn.','purge.') + 'base-cbb.css');
 Http.send();
 Http.onreadystatechange = (e) => {
   console.log(Http.responseText)
 }
-Http.open("GET", external_path.replace('purge.','cdn.') + 'style.css');
+Http.open("GET", external_path.replace('cdn.','purge.') + 'style.css');
 Http.send();
 Http.onreadystatechange = (e) => {
   console.log(Http.responseText)
 }
-Http.open("GET", external_path.replace('purge.','cdn.') + 'js-scripts.js');
+Http.open("GET", external_path.replace('cdn.','purge.')+ 'js-scripts.js');
 Http.send();
-Http.open("GET", external_path.replace('purge.','cdn.') + 'vue-scripts.js');
+Http.open("GET", external_path.replace('cdn.','purge.') + 'vue-scripts.js');
 Http.send();
-Http.open("GET", external_path.replace('purge.','cdn.') + 'server.js');
+Http.open("GET", external_path.replace('cdn.','purge.') + 'server.js');
 Http.send();
-Http.open("GET", external_path.replace('purge.','cdn.') + 'main.html');
+Http.open("GET", external_path.replace('cdn.','purge.') + 'main.html');
 Http.send();
 
   $('head').append('<link rel="stylesheet" href="'+ v_style1 +'" type="text/css" />');
