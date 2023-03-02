@@ -11,25 +11,6 @@ var v_js2 = external_path + 'vue-scripts.js'; //+ '?' + random_id;
 var v_js3 = external_path + 'server.js'; //+ '?' + random_id;
 var v_html = external_path +'main.html' + '?' + random_id;
 
-Http.open("GET", purge_path + 'base-cbb.css');
-Http.send();
-Http.onreadystatechange = (e) => {
-  console.log(Http.responseText)
-}
-Http.open("GET", purge_path + 'style.css');
-Http.send();
-Http.onreadystatechange = (e) => {
-  console.log(Http.responseText)
-}
-Http.open("GET", purge_path + 'js-scripts.js');
-Http.send();
-Http.open("GET", purge_path + 'vue-scripts.js');
-Http.send();
-Http.open("GET", purge_path + 'server.js');
-Http.send();
-Http.open("GET", purge_path + 'main.html');
-Http.send();
-
   $('head').append('<link rel="stylesheet" href="'+ v_style1 +'" type="text/css" />');
   $('head').append('<link rel="stylesheet" href="'+ v_style2 +'" type="text/css" />');
   $("#c_body").load(v_html);
