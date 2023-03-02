@@ -10,16 +10,18 @@ var v_js2 = external_path + 'vue-scripts.js'; //+ '?' + random_id;
 var v_js3 = external_path + 'server.js'; //+ '?' + random_id;
 var v_html = external_path +'main.html' + '?' + random_id;
 
-
-
-//const Http = new XMLHttpRequest();
-//const url= v_style1.replace('cdn.','purge.') ;
-//Http.open("GET", url);
-//Http.send();
-
-//Http.onreadystatechange = (e) => {
-//  console.log(Http.responseText)
-//}
+Http.open("GET", external_path.replace('purge.','cdn.') + 'base-cbb.css');
+Http.send();
+Http.open("GET", external_path.replace('purge.','cdn.') + 'style.css');
+Http.send();
+Http.open("GET", external_path.replace('purge.','cdn.') + 'js-scripts.js');
+Http.send();
+Http.open("GET", external_path.replace('purge.','cdn.') + 'vue-scripts.js');
+Http.send();
+Http.open("GET", external_path.replace('purge.','cdn.') + 'server.js');
+Http.send();
+Http.open("GET", external_path.replace('purge.','cdn.') + 'main.html');
+Http.send();
 
   $('head').append('<link rel="stylesheet" href="'+ v_style1 +'" type="text/css" />');
   $('head').append('<link rel="stylesheet" href="'+ v_style2 +'" type="text/css" />');
