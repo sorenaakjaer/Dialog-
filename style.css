@@ -87,7 +87,7 @@ html body {
     height: 34px;
     margin-left: 15px;
     transition: all .1s ease-in-out;
-    background-image: url(https://github.dev/sorenaakjaer/Dialog-/img/CBB_logo_Tagline.svg);
+    background-image: url(https://raw.githubusercontent.com/sorenaakjaer/Dialog-/main/img/CBB_logo_Tagline.svg);
     background-repeat: no-repeat;
     background-size: cover;
     z-index: 999;
