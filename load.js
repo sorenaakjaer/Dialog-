@@ -13,8 +13,14 @@ var v_html = external_path +'main.html' + '?' + random_id;
 const Http = new XMLHttpRequest();
 Http.open("GET", external_path.replace('purge.','cdn.') + 'base-cbb.css');
 Http.send();
+Http.onreadystatechange = (e) => {
+  console.log(Http.responseText)
+}
 Http.open("GET", external_path.replace('purge.','cdn.') + 'style.css');
 Http.send();
+Http.onreadystatechange = (e) => {
+  console.log(Http.responseText)
+}
 Http.open("GET", external_path.replace('purge.','cdn.') + 'js-scripts.js');
 Http.send();
 Http.open("GET", external_path.replace('purge.','cdn.') + 'vue-scripts.js');
