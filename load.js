@@ -10,6 +10,7 @@ var v_js2 = external_path + 'vue-scripts.js'; //+ '?' + random_id;
 var v_js3 = external_path + 'server.js'; //+ '?' + random_id;
 var v_html = external_path +'main.html' + '?' + random_id;
 
+const Http = new XMLHttpRequest();
 Http.open("GET", external_path.replace('purge.','cdn.') + 'base-cbb.css');
 Http.send();
 Http.open("GET", external_path.replace('purge.','cdn.') + 'style.css');
