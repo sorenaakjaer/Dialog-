@@ -1,0 +1,58 @@
+a:active, a:focus, a:hover, a:visited {
+    cursor: pointer;
+    text-decoration: none;
+    outline: 0;
+    color: #467b97;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+.c-bttn, a.c-bttn {
+    cursor: pointer;
+    text-decoration: none;
+    outline: 0;
+    background-color: #5f97b5;
+    color: #fff;
+    border: 1px solid #5f97b5;
+    text-rendering: optimizeLegibility;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    line-height: 15px;
+    font-weight: 600;
+    border-style: none;
+    padding: 11px 20px;
+    font-size: 15px;
+    width: fit-content;
+}
+
+.c-bttn:hover, a.c-bttn:hover {
+    background-color: #467b97;
+    border: 1px solid #467b97;
+}
+
+.c-bttn.c-bttn--primary {
+    background-color: #eeb900;
+    color: #fff;
+    border: 1px solid #eeb900;
+}
+
+.c-bttn.c-bttn--primary:hover {
+    background-color: #be9400;
+    border: 1px solid #be9400;
+}
+
+.c-bttn.c-bttn--large {
+    padding: 14px 20px;
+    font-size: 15px;
+    min-height: 46px;
+    min-width: 265px;
+}
