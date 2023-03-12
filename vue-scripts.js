@@ -20,22 +20,63 @@ $(document).one('trigger::vue_loaded', function () {
 
     addVueVirtualScrollerFromCDN()
     $(document).one("trigger::vue__virtual_scroller_loaded", function () {
-        setTimeout(_ => {
-            console.log(window.VueVirtualScroller)
-        }, 2000)
         var app = new Vue({
             el: '#c-app',
             data: {
                 user: null,
                 isUserLoading: false,
                 theCustomer: null,
+                theCustomerId: null,
                 isTheCustomerLoading: false,
                 theCustomerPhoneNumber: '20163673',
                 theCustomerPhoneNumberHasError: false,
                 logs: [],
-                isLogLoading: false
+                isLogLoading: false,
+                loggingOptions: [],
+                resultOptions: [],
+                selectedCat: null,
+                selectedReason: null,
+                selectedResult: null,
+                selectedMessage: '',
+                isSubmittingNewLog: false,
+                relatedLog: null,
+                isNewLogFormActive: false
             },
             computed: {
+                filteredCategories() {
+                    const cats = []
+                    this.loggingOptions.forEach(item => {
+                        const idx = cats.findIndex(cat => cat === item.CAT)
+                        if (idx < 0) {
+                            cats.push(item.CAT)
+                        }
+                    })
+                    return cats.sort()
+                },
+                filteredReasons() {
+                    if (!this.selectedCat) {
+                        return []
+                    }
+                    const filteredOptions = this.loggingOptions.filter(option => option.CAT === this.selectedCat)
+                    return filteredOptions.map(option => option.REASON).sort()
+                },
+                filteredResults() {
+                    if (!this.selectedCat || !this.selectedReason) {
+                        return []
+                    }
+                    const filteredOptions = this.loggingOptions.filter(option => option.CAT === this.selectedCat && option.REASON === this.selectedReason)
+                    const itemObj = filteredOptions[0]
+                    const results = this.resultOptions[0]
+                    const filteredResults = []
+                    for (const key in results) {
+                        if (itemObj[key] === 'true') {
+                            const val = results[key]
+                            filteredResults.push(val)
+                        }
+                    }
+                    console.log({ itemObj, results, filteredResults })
+                    return filteredResults.sort()
+                },
                 logsSorted() {
                     const itemsWithRefs = this.logs.filter(item => item.REF_IDS);
                     const itemsWithoutRefs = this.logs.filter(item => !item.REF_IDS);
@@ -98,6 +139,46 @@ $(document).one('trigger::vue_loaded', function () {
                 }
             },
             methods: {
+                onSelectedCatChange() {
+                    this.openNewLogForm()
+                    this.selectedReason = null
+                },
+                setRelatedCase(log) {
+                    this.relatedLog = log.ID
+                    this.isNewLogFormActive = true
+                },
+                openNewLogForm() {
+                    this.isNewLogFormActive = true
+                },
+                closeNewLogForm() {
+                    this.isNewLogFormActive = false
+                    this.resetNewLogForm()
+                },
+                submitNewLog() {
+                    let newLog = [{
+                        CUSTOMER_ID: this.theCustomerId,
+                        REF_IDS: this.relatedLog,
+                        CAT: this.selectedCat,
+                        REASON: this.selectedReason,
+                        RESULT: this.selectedResult,
+                        MSG: this.selectedMessage
+                    }]
+                    $('.input_set_log_data > input').val(JSON.stringify(newLog))
+                    this.isSubmittingNewLog = true
+                    this.observeChanges('.output_log_created', (success) => {
+                        this.logs.push(success)
+                        this.closeNewLogForm()
+                    })
+                    $('.set_log_data > a').click()
+                },
+                resetNewLogForm() {
+                    this.selectedCat = null
+                    this.selectedReason = null
+                    this.selectedResult = null
+                    this.selectedMessage = ''
+                    this.isSubmittingNewLog = false
+                    this.relatedLog = null
+                },
                 findReferenceChain(item) {
                     const chain = [item.ID];
                     let refIds = item.REF_IDS.split(';').map(id => parseInt(id));
@@ -116,19 +197,28 @@ $(document).one('trigger::vue_loaded', function () {
                     }
                     this.isTheCustomerLoading = true
                     $('.input_customer_id > input').val(this.theCustomerPhoneNumber)
-                    // User data
+                    // Read customer name etc.
                     this.observeChanges('.output_customer_data', (success) => {
                         this.theCustomer = success[0]
                         this.isTheCustomerLoading = false
                         this.$set(this.theCustomer, 'vPhone', this.theCustomerPhoneNumber)
+                        this.theCustomerId = this.theCustomerPhoneNumber
                         this.theCustomerPhoneNumber = ''
                     });
                     $('.get_customer_data > a').click();
-                    // User log
+
+                    // Read customer log
                     this.observeChanges('.output_log_data', (success) => {
                         this.logs = success
                     });
                     $('.get_log_data > a').click();
+
+                    // Read customer new logging options
+                    this.observeChanges('.output_log_options_data', (success) => {
+                        this.loggingOptions = success && success['list'] ? success['list'] : []
+                        this.resultOptions = success && success['result_options'] ? success['result_options'] : []
+                    });
+                    $('.get_log_options_data > a').click()
                 },
                 readUser() {
                     this.isUserLoading = true
@@ -160,7 +250,6 @@ $(document).one('trigger::vue_loaded', function () {
                 this.readUser()
                 // this.readCustomer()
                 // Virtual scroller
-                console.log(window["vue-virtual-scroller"])
                 Vue.component('vue-virtual-scroller', window["vue-virtual-scroller"].DynamicScroller);
                 Vue.component('DynamicScrollerItem', window["vue-virtual-scroller"].DynamicScrollerItem);
             }
@@ -173,7 +262,6 @@ $.getScript(
     "https://cdn.jsdelivr.net/npm/vue@2"
     //"https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"
     , function (data, textStatus, jqxhr) {
-        //console.log('VUW imported')
         $(document).trigger('trigger::vue_loaded');
     })
 
@@ -186,7 +274,6 @@ function addVueVirtualScrollerFromCDN() {
 
     // Create a <script> element for the Vue Multiselect script
     $.getScript("https://cdn.jsdelivr.net/npm/vue-virtual-scroller@1.1.2/dist/vue-virtual-scroller.umd.min.js", function (e, t, s) {
-        console.log('succes', e, t, s)
         $(document).trigger("trigger::vue__virtual_scroller_loaded")
     })
 }
