@@ -1,63 +1,126 @@
-<div class="c-header">
-    <div class="c-wrapper">
-        <div id="logo"></div>
-        <p class="c-header__explainer">
-            CBB Dialog + Portal
-    </div>
-</div>
-</div>
-<div class="c-page" id="c-app" v-cloak>
-    <div class="c-wrapper">
-        <div class="c-grid">
-            <div class="c-card">
-                <div class="c-card__header">
-                    <h4>Kunde {{ n }}</h4>
-                </div>
-                <div class="c-card__body pad-1">
-                    <div class="c-loader" v-if="!theCustomer"></div>
-                    <template v-else>
-                        <ul>
-                            <li>Item</li>
-                        </ul>
-                    </template>
-                </div>
+<div id="c-app" v-cloak>
+    <div class="c-header">
+        <div class="c-wrapper">
+            <div id="logo">
+                <img src="https://www.cbb.dk/static/images/CBB_logo_Tagline.svg" />
             </div>
-            <div class="c-card">
-                <div class="c-card__header">
-                    <h4>Ny Logning</h4>
-                </div>
-                <div class="c-card__body pad-1">
-                    <div class="c-loader" v-if="false"></div>
-                    <template v-else>
-                        <ul>
-                            <li>Item</li>
-                        </ul>
-                    </template>
-                </div>
-            </div>
-            <div class="c-card">
-                <div class="c-card__header">
-                    <h4>Handlinger på kunden</h4>
-                </div>
-                <div class="c-card__body pad-1">
-                    <div class="c-buttons">
-                        <button class="c-bttn c-bttn--primary" v-for="n in 6">Opret sag til 2ndline</button>
+            <div class="c-header__right">
+                <div :class="{'hint--bottom hint--always hint--error': theCustomerPhoneNumberHasError}"
+                    aria-label="Indtast venligst et gyldigt nummer">
+                    <div class="input-with-button"
+                        :class="{'input-with-button--error': theCustomerPhoneNumberHasError}">
+                        <input type="text" class="input-with-button__input" v-model="theCustomerPhoneNumber"
+                            ref="customer_number_input" placeholder="Indtast mobilnummer"
+                            @keyup="theCustomerPhoneNumberHasError = false" />
+                        <button class="input-with-button__button c-bttn c-bttn--blue"
+                            :class="{'c-bttn--loading': isTheCustomerLoading}" @click="readCustomer">
+                            <template v-if="!isTheCustomerLoading">Søg efter kunde</template>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="form">
-    <!-- GET CUSTOMER -->
-    <div class="E_GET_CUSTOMER_INPUT">
-        <input />
+    <div class="c-page">
+        <template v-if="!user">
+            <div>
+                <div class="c-loader"></div>
+            </div>
+        </template>
+        <div class="" v-if="user && !theCustomer">
+            <h2 class="center italic">Ingen kunde indlæst</h2>
+        </div>
+        <div class="c-wrapper" v-if="theCustomer">
+            <div class="c-grid">
+                <div class="c-card">
+                    <div class="c-card__header">
+                        <h4>Kunde</h4>
+                    </div>
+                    <div class="c-card__body pad-1">
+                        <div class="the-customer" v-if="theCustomer">
+                            <ul class="marg-1-bottom">
+                                <li>{{ theCustomer.CUSTOMER_FIRST_NAME }} {{ theCustomer.CUSTOMER_LAST_NAME }}</li>
+                                <li>{{ theCustomer.CUSTOMER_ADDRESS }}</li>
+                                <li>{{ theCustomer.CUSTOMER_ZIP }} {{ theCustomer.CUSTOMER_CITY }}</li>
+                            </ul>
+                            <ul>
+                                <li><label class="c-label">Mobilnummer</label>{{ theCustomer.vPhone }}</li>
+                                <li><label class="c-label">Email</label>{{ theCustomer.CUSTOMER_EMAIL }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-card">
+                    <div class="c-card__header">
+                        <h4>Dialog tråd</h4>
+                    </div>
+                    <div class="c-card__body">
+                        <div class="c-loader" v-if="isLogLoading"></div>
+                        <!-- 
+                            <vue-virtual-scroller :items="itemsArr" :min-item-size="100" :scroll-mode="'end'" class="scroller">
+                                <template v-slot="{ item, index, active }">
+                                    <DynamicScrollerItem :item="item.title" :size-dependencies="[
+                                    item.title,
+                                  ]" :data-index="index">
+                                        <div class="vc-item">
+                                            {{ item.title }} {{ item.id }}
+                                        </div>
+                                    </DynamicScrollerItem>
+                                </template>
+                            </vue-virtual-scroller>
+                        -->
+                        <ul class="c-logs">
+                            <li v-for="activity in logsSorted" class="c-logs__log" :key="activity.ID">
+                                <div class="c-logs__log__meta">
+                                    <div>Oprettet: {{ activity.CREATED_TIME }}</div>
+                                </div>
+                                <ul class="c-logs__log__content" v-if="activity.TYPE">
+                                    <li class="c-logs__log__content__item" v-if="activity.STATUS">
+                                        <label class="c-label">STATUS</label>
+                                        <p><span class="pill" :class="{'pill--danger': activity.STATUS === 'Closed'}">{{
+                                                activity.STATUS }}
+                                            </span>
+                                            <span class="c-logs__log__content__item__closing-time"
+                                                v-if="activity.CLOSED_TIME">{{ activity.CLOSED_TIME }}</span>
+                                        </p>
+                                    </li>
+                                    <li class="c-logs__log__content__item"><label class="c-label">Type</label>
+                                        <p>{{ activity.TYPE }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item" v-if="activity.REASON">
+                                        <label class="c-label">ÅRSAG</label>
+                                        <p>{{ activity.REASON }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item" v-if="activity.CAT">
+                                        <label class="c-label">KATEGORI</label>
+                                        <p>{{ activity.CAT }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item" v-if="activity.RESULT">
+                                        <label class="c-label">UDFALD</label>
+                                        <p>{{ activity.RESULT }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item c-logs__log__content__item__message"
+                                        v-if="activity.MSG">
+                                        <label class="c-label">BESKED</label>
+                                        <p>{{ activity.MSG }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item"><a href="">Tilføj relateret sag</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="c-card">
+                    <div class="c-card__header">
+                        <h4>Handlinger på kunden</h4>
+                    </div>
+                    <div class="c-card__body pad-1">
+                        <div class="c-buttons">
+                            <button class="c-bttn c-bttn--primary">Opret sag til 2ndline</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="E_GET_CUSTOMER_GET">
-        <a href="javascript:void(0)">asd</a>
-    </div>
-    <div class="E_GET_CUSTOMER_ANSWER">
-        <div></div>
-    </div>
-</div>
 </div>
