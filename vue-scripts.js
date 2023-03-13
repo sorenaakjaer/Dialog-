@@ -233,7 +233,7 @@ $(document).one('trigger::vue_loaded', function () {
                 },
                 observeChanges(selector, callback) {
                     const el = $(selector + '> div')
-                    if (!el) {
+                    if (!el || !el.length === 0) {
                         console.warn(`No element found with selector ${selector > div}`);
                         return;
                     }
@@ -261,7 +261,7 @@ $(document).one('trigger::vue_loaded', function () {
 })
 
 // import VUE
-$(document).one("TRIGGER_AFTER_LOGIN", function () {
+$(document).one("TRIGGER_SLOW_LOAD", function () {
     $.getScript(
         "https://cdn.jsdelivr.net/npm/vue@2"
         //"https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"
@@ -283,6 +283,7 @@ function addVueVirtualScrollerFromCDN() {
 }
 
 setTimeout(_ => {
-    $(document).trigger("TRIGGER_AFTER_LOGIN")
+    $(document).trigger("TRIGGER_SLOW_LOAD")
+    console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
 }, 5000)
