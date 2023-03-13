@@ -1,7 +1,5 @@
-const params = new URLSearchParams(window.location.search)
-var version = params.get('VERSION')
 var random_id = new Date().valueOf();
-if (version.length() > 0)
+if (version.length > 0)
   {var external_path = 'https://cdn.jsdelivr.net/gh/sorenaakjaer/Dialog-@' + version + '/'}
 else
   {var external_path = 'https://cdn.jsdelivr.net/gh/sorenaakjaer/Dialog-@' + 'latest' + '/'}
