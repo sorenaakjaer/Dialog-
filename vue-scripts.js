@@ -210,7 +210,7 @@ $(document).one('trigger::vue_init', function () {
                     // Read customer log
                     setTimeout(_ => {
                         this.observeChanges('.output_log_data', (success) => {
-                            this.logs = success
+                            // this.logs = success
                         });
                         $('.get_log_data > a').click();
 
@@ -237,6 +237,7 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_login_data > a').click();
                 },
                 observeChanges(selector, callback) {
+                    console
                     const el = $(selector + '> div')
                     if (!el || el.length === 0) {
                         console.warn(`No element found with selector ${selector > div}`);
