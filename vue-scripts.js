@@ -225,18 +225,20 @@ $(document).one('trigger::vue_loaded', function () {
                     this.observeChanges('.output_login_data', (success) => {
                         this.user = success[0]
                         this.isUserLoading = false
+                        this.$nextTick(_ => {
+                            this.$refs.customer_number_input.focus()
+                        })
                     });
                     $('.get_login_data > a').click();
                 },
                 observeChanges(selector, callback) {
                     const el = $(selector + '> div')
-                    if (!el || el.length === 0) {
+                    if (!el) {
                         console.warn(`No element found with selector ${selector > div}`);
                         return;
                     }
                     el.html('')
                     let cInterval = setInterval(_ => {
-                        console.log(selector, el, el.html())
                         const str = el.html()
                         if (str.length > 3) {
                             clearInterval(cInterval)
@@ -259,16 +261,14 @@ $(document).one('trigger::vue_loaded', function () {
 })
 
 // import VUE
-setTimeout(_ => {
+$(document).one("TRIGGER_AFTER_LOGIN", function () {
     $.getScript(
         "https://cdn.jsdelivr.net/npm/vue@2"
         //"https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"
         , function (data, textStatus, jqxhr) {
             $(document).trigger('trigger::vue_loaded');
         })
-}, 1000)
-
-
+})
 function addVueVirtualScrollerFromCDN() {
     // Create a <link> element for the CSS file
     const link = document.createElement('link')
@@ -281,3 +281,8 @@ function addVueVirtualScrollerFromCDN() {
         $(document).trigger("trigger::vue__virtual_scroller_loaded")
     })
 }
+
+setTimeout(_ => {
+    $(document).trigger("TRIGGER_AFTER_LOGIN")
+    $('.c-init-loader').removeClass('c-init-loader--show')
+}, 2000)
