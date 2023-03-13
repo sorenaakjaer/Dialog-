@@ -241,6 +241,7 @@ $(document).one('trigger::vue_init', function () {
                     let cInterval = setInterval(_ => {
                         const str = el.html()
                         if (str.length > 3) {
+                            console.log('observe', { selector, str })
                             clearInterval(cInterval)
                             callback(JSON.parse(decodeURI(str)));
                         } else {
