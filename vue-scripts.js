@@ -285,4 +285,4 @@ function addVueVirtualScrollerFromCDN() {
 setTimeout(_ => {
     $(document).trigger("TRIGGER_AFTER_LOGIN")
     $('.c-init-loader').removeClass('c-init-loader--show')
-}, 2000)
+}, 5000)
