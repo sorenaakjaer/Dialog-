@@ -236,6 +236,7 @@ $(document).one('trigger::vue_loaded', function () {
                     }
                     el.html('')
                     let cInterval = setInterval(_ => {
+                        console.log(selector, el, el.html())
                         const str = el.html()
                         if (str.length > 3) {
                             clearInterval(cInterval)
