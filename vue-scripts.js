@@ -230,7 +230,7 @@ $(document).one('trigger::vue_loaded', function () {
                 },
                 observeChanges(selector, callback) {
                     const el = $(selector + '> div')
-                    if (!el) {
+                    if (!el || el.length === 0) {
                         console.warn(`No element found with selector ${selector > div}`);
                         return;
                     }
@@ -259,12 +259,15 @@ $(document).one('trigger::vue_loaded', function () {
 })
 
 // import VUE
-$.getScript(
-    "https://cdn.jsdelivr.net/npm/vue@2"
-    //"https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"
-    , function (data, textStatus, jqxhr) {
-        $(document).trigger('trigger::vue_loaded');
-    })
+setTimeout(_ => {
+    $.getScript(
+        "https://cdn.jsdelivr.net/npm/vue@2"
+        //"https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"
+        , function (data, textStatus, jqxhr) {
+            $(document).trigger('trigger::vue_loaded');
+        })
+}, 1000)
+
 
 function addVueVirtualScrollerFromCDN() {
     // Create a <link> element for the CSS file
