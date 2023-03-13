@@ -78,67 +78,24 @@ $(document).one('trigger::vue_init', function () {
                     return filteredResults.sort()
                 },
                 logsSorted() {
-                    const itemsWithRefs = this.logs.filter(item => item.REF_IDS);
-                    const itemsWithoutRefs = this.logs.filter(item => !item.REF_IDS);
-
-                    // Sort itemsWithRefs based on the newest CREATED_TIME in the reference chain
-                    itemsWithRefs.sort((a, b) => {
-                        // Find the newest item in the reference chain for each item
-                        const aRefs = this.findReferenceChain(a);
-                        const bRefs = this.findReferenceChain(b);
-                        const aNewest = aRefs.reduce((newest, ref) => {
-                            const refItem = this.logs.find(item => item.ID === ref);
-                            if (new Date(refItem.CREATED_TIME) > new Date(newest.CREATED_TIME)) {
-                                return refItem;
-                            } else {
-                                return newest;
-                            }
-                        }, a);
-                        const bNewest = bRefs.reduce((newest, ref) => {
-                            const refItem = this.logs.find(item => item.ID === ref);
-                            if (new Date(refItem.CREATED_TIME) > new Date(newest.CREATED_TIME)) {
-                                return refItem;
-                            } else {
-                                return newest;
-                            }
-                        }, b);
-
-                        // Sort the items based on the newest CREATED_TIME in the reference chain
-                        return new Date(aNewest.CREATED_TIME);
-                    });
-
-                    itemsWithoutRefs.sort((a, b) => {
-                        return new Date(b.CREATED_TIME) - new Date(a.CREATED_TIME);
-                    });
-
-                    // Merge the two sorted arrays into one sorted array
-                    const sortedItems = [];
-                    let i = 0;
-                    let j = 0;
-
-                    while (i < itemsWithRefs.length && j < itemsWithoutRefs.length) {
-                        if (new Date(itemsWithRefs[i].CREATED_TIME) < new Date(itemsWithoutRefs[j].CREATED_TIME)) {
-                            sortedItems.push(itemsWithRefs[i]);
-                            i++;
-                        } else {
-                            sortedItems.push(itemsWithoutRefs[j]);
-                            j++;
-                        }
-                    }
-
-                    // Add any remaining items to the end of the sorted array
-                    if (i < itemsWithRefs.length) {
-                        sortedItems.push(...itemsWithRefs.slice(i));
-                    }
-
-                    if (j < itemsWithoutRefs.length) {
-                        sortedItems.push(...itemsWithoutRefs.slice(j));
-                    }
-
-                    return sortedItems;
+                    return this.logs.sort((a, b) => {
+                        const dateA = this.formatDate(a.CREATED_TIME)
+                        const dateB = this.formatDate(b.CREATED_TIME)
+                        return dateA - dateB;
+                    })
                 }
             },
             methods: {
+                formatDate(str) {
+                    if (!str) {
+                        return new Date()
+                    }
+                    const [date, time] = str.split(' ');
+                    const [day, month, year] = date.split('-');
+                    const [hours, minutes] = time.split(':');
+                    const formattedDate = new Date(`${month}/${day}/${year} ${hours}:${minutes}`);
+                    return formattedDate;
+                },
                 onSelectedCatChange() {
                     this.openNewLogForm()
                     this.selectedReason = null
@@ -179,16 +136,6 @@ $(document).one('trigger::vue_init', function () {
                     this.isSubmittingNewLog = false
                     this.relatedLog = null
                 },
-                findReferenceChain(item) {
-                    const chain = [item.ID];
-                    let refIds = item.REF_IDS.split(';').map(id => parseInt(id));
-                    while (refIds.length > 0) {
-                        const refItem = this.logs.find(item => item.ID === refIds[0]);
-                        chain.push(refItem.ID);
-                        refIds = refItem.REF_IDS ? refItem.REF_IDS.split(';').map(id => parseInt(id)) : [];
-                    }
-                    return chain;
-                },
                 readCustomer() {
                     if (this.theCustomerPhoneNumber.length !== 8) {
                         this.theCustomerPhoneNumberHasError = true
@@ -208,22 +155,17 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_customer_data > a').click();
 
                     // Read customer log
-                    setTimeout(_ => {
-                        this.observeChanges('.output_log_data', (success) => {
-                            // this.logs = success
-                        });
-                        $('.get_log_data > a').click();
-
-                    }, 5000)
+                    this.observeChanges('.output_log_data', (success) => {
+                        this.logs = success
+                    });
+                    $('.get_log_data > a').click();
 
                     // Read customer new logging options
-                    setTimeout(_ => {
-                        this.observeChanges('.output_log_options_data', (success) => {
-                            this.loggingOptions = success && success['list'] ? success['list'] : []
-                            this.resultOptions = success && success['result_options'] ? success['result_options'] : []
-                        });
-                        $('.get_log_options_data > a').click()
-                    }, 10000)
+                    this.observeChanges('.output_log_options_data', (success) => {
+                        this.loggingOptions = success && success['list'] ? success['list'] : []
+                        this.resultOptions = success && success['result_options'] ? success['result_options'] : []
+                    });
+                    $('.get_log_options_data > a').click()
                 },
                 readUser() {
                     this.isUserLoading = true

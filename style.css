@@ -1132,3 +1132,10 @@ svg:not(:root) {
         opacity: 1;
     }
 }
+
+.text-explainer {
+    margin: 1rem;
+    font-size: 16px;
+    font-style: italic;
+    color: #838383;
+}

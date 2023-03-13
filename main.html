@@ -83,6 +83,8 @@
                         <h4>Dialog tråd</h4>
                     </div>
                     <div class="c-card__body c-card__dialog">
+                        <h4 class="text-explainer" v-if="logsSorted.length < 1">Ingen aktivitet logget på dette nummer
+                        </h4>
                         <div class="c-loader" v-if="isLogLoading"></div>
                         <!-- 
                             <vue-virtual-scroller :items="itemsArr" :min-item-size="100" :scroll-mode="'end'" class="scroller">
