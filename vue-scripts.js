@@ -1,5 +1,5 @@
-$(document).one('trigger::vue_loaded', function () {
-    console.log('vue::loaded')
+$(document).one('trigger::vue_init', function () {
+    console.log('trigger::vue_init')
 
     // Register a global custom directive called `v-focus`
     Vue.directive('click-outside', {
@@ -233,7 +233,7 @@ $(document).one('trigger::vue_loaded', function () {
                 },
                 observeChanges(selector, callback) {
                     const el = $(selector + '> div')
-                    if (!el || !el.length === 0) {
+                    if (!el || el.length === 0) {
                         console.warn(`No element found with selector ${selector > div}`);
                         return;
                     }
@@ -266,7 +266,7 @@ $(document).one("TRIGGER_SLOW_LOAD", function () {
         "https://cdn.jsdelivr.net/npm/vue@2"
         //"https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"
         , function (data, textStatus, jqxhr) {
-            $(document).trigger('trigger::vue_loaded');
+            $(document).trigger('trigger::vue_init');
         })
 })
 function addVueVirtualScrollerFromCDN() {
