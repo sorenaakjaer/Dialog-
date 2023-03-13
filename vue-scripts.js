@@ -235,4 +235,26 @@ setTimeout(_ => {
     $(document).trigger("TRIGGER_SLOW_LOAD")
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
-}, 5000)
+}, 2000)
+
+$(document).one('TRIGGER_AFTER_LOGIN', function () {
+    console.log('TRIGGER_AFTER_LOGIN')
+    $.blockUI.defaults = {
+        message: '',
+        fadeIn: 0,
+        fadeOut: 0,
+        timeout: 0,
+        showOverlay: false,
+        centerY: false,
+        css: {
+            width: '1px',
+            top: '0',
+            left: '',
+            right: '0',
+            border: 'none',
+            padding: '0',
+            opacity: .0,
+            color: '#fff'
+        }
+    }
+})
