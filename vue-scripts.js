@@ -123,7 +123,10 @@ $(document).one('trigger::vue_init', function () {
                     $('.input_set_log_data > input').val(JSON.stringify(newLog))
                     this.isSubmittingNewLog = true
                     this.observeChanges('.output_log_created', (success) => {
-                        this.logs.push(success)
+                        console.log({ success })
+                        if (success && success.length > 0) {
+                            this.logs.push(success[0])
+                        }
                         this.closeNewLogForm()
                     })
                     $('.set_log_data > a').click()
@@ -235,10 +238,10 @@ setTimeout(_ => {
     $(document).trigger("TRIGGER_SLOW_LOAD")
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
-}, 2000)
+    hideBlockUI()
+}, 4000)
 
-$(document).one('TRIGGER_AFTER_LOGIN', function () {
-    console.log('TRIGGER_AFTER_LOGIN')
+function hideBlockUI() {
     $.blockUI.defaults = {
         message: '',
         fadeIn: 0,
@@ -257,4 +260,4 @@ $(document).one('TRIGGER_AFTER_LOGIN', function () {
             color: '#fff'
         }
     }
-})
+}
