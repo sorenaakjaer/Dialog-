@@ -2,7 +2,10 @@ console.log('test2');
 const params = new URLSearchParams(window.location.search)
 var version = params.get('VERSION')
 var random_id = new Date().valueOf();
-var external_path = 'https://cdn.jsdelivr.net/gh/sorenaakjaer/Dialog-@' + version + '/'
+if (version.length() > 0)
+  {var external_path = 'https://cdn.jsdelivr.net/gh/sorenaakjaer/Dialog-@' + version + '/'}
+else
+  {var external_path = 'https://cdn.jsdelivr.net/gh/sorenaakjaer/Dialog-@' + 'latest' + '/'}
 var purge_path = 'https://cdn.jsdelivr.net/gh/sorenaakjaer/Dialog-/'
 var v_style1 = external_path + 'base-cbb.css' + '?' + random_id;
 var v_style2 = external_path + 'style.css' + '?' + random_id;
