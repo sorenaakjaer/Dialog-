@@ -74,11 +74,16 @@ $(document).one('trigger::vue_init', function () {
                             filteredResults.push(val)
                         }
                     }
-                    console.log({ itemObj, results, filteredResults })
                     return filteredResults.sort()
                 },
+                logsDecoded() {
+                    return this.logs.map((log) => ({
+                        ...log,
+                        MSG: decodeURI(log.MSG)
+                    }))
+                },
                 logsSorted() {
-                    return this.logs.sort((a, b) => {
+                    return this.logsDecoded.sort((a, b) => {
                         const dateA = this.formatDate(a.CREATED_TIME)
                         const dateB = this.formatDate(b.CREATED_TIME)
                         return dateA - dateB;
@@ -118,7 +123,7 @@ $(document).one('trigger::vue_init', function () {
                         CAT: this.selectedCat,
                         REASON: this.selectedReason,
                         RESULT: this.selectedResult,
-                        MSG: this.selectedMessage
+                        MSG: encodeURI(this.selectedMessage)
                     }]
                     $('.input_set_log_data > input').val(JSON.stringify(newLog))
                     this.isSubmittingNewLog = true
@@ -182,7 +187,6 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_login_data > a').click();
                 },
                 observeChanges(selector, callback) {
-                    console
                     const el = $(selector + '> div')
                     if (!el || el.length === 0) {
                         console.warn(`No element found with selector ${selector > div}`);
@@ -239,7 +243,7 @@ setTimeout(_ => {
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
     hideBlockUI()
-}, 4000)
+}, 2000)
 
 function hideBlockUI() {
     $.blockUI.defaults = {
