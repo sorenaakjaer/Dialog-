@@ -208,17 +208,22 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_customer_data > a').click();
 
                     // Read customer log
-                    this.observeChanges('.output_log_data', (success) => {
-                        this.logs = success
-                    });
-                    $('.get_log_data > a').click();
+                    setTimeout(_ => {
+                        this.observeChanges('.output_log_data', (success) => {
+                            this.logs = success
+                        });
+                        $('.get_log_data > a').click();
+
+                    }, 5000)
 
                     // Read customer new logging options
-                    this.observeChanges('.output_log_options_data', (success) => {
-                        this.loggingOptions = success && success['list'] ? success['list'] : []
-                        this.resultOptions = success && success['result_options'] ? success['result_options'] : []
-                    });
-                    $('.get_log_options_data > a').click()
+                    setTimeout(_ => {
+                        this.observeChanges('.output_log_options_data', (success) => {
+                            this.loggingOptions = success && success['list'] ? success['list'] : []
+                            this.resultOptions = success && success['result_options'] ? success['result_options'] : []
+                        });
+                        $('.get_log_options_data > a').click()
+                    }, 10000)
                 },
                 readUser() {
                     this.isUserLoading = true
