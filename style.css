@@ -1158,3 +1158,7 @@ svg:not(:root) {
     font-style: italic;
     color: #838383;
 }
+
+#webform {
+    display: none;
+}
