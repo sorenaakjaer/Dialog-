@@ -261,7 +261,7 @@ setTimeout(_ => {
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
     hideBlockUI()
-}, 0)
+}, 4000)
 
 function hideBlockUI() {
     if (!$.blockUI) {
