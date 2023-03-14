@@ -77,8 +77,17 @@ $(document).one('trigger::vue_init', function () {
                     return filteredResults.sort()
                 },
                 logsDecoded() {
+                    function createAShortVersionOfTheText(txt) {
+                        let shortText = txt;
+                        const shortTextLength = 150
+                        if (txt.length > shortTextLength) {
+                            shortText = txt.substring(0, shortTextLength) + "...";
+                        }
+                        return shortText
+                    }
                     return this.logs.map((log) => ({
                         ...log,
+                        v_MsgShort: createAShortVersionOfTheText(decodeURI(log.MSG)),
                         MSG: decodeURI(log.MSG)
                     }))
                 },
@@ -130,7 +139,9 @@ $(document).one('trigger::vue_init', function () {
                     this.observeChanges('.output_log_created', (success) => {
                         console.log({ success })
                         if (success && success.length > 0) {
-                            this.logs.push(success[0])
+                            let log = success[0]
+                            this.$set(log, 'v_isReadMore', false);
+                            this.logs.push(log)
                         }
                         this.closeNewLogForm()
                     })
@@ -165,6 +176,9 @@ $(document).one('trigger::vue_init', function () {
                     // Read customer log
                     this.observeChanges('.output_log_data', (success) => {
                         this.logs = success
+                        this.logs.forEach(log => {
+                            this.$set(log, 'v_isReadMore', false);
+                        })
                     });
                     $('.get_log_data > a').click();
 
@@ -203,6 +217,10 @@ $(document).one('trigger::vue_init', function () {
                             console.log('ANSER::EMPTY')
                         }
                     }, 1500)
+                },
+                setReadMoreForItem(activity) {
+                    const idx = this.logs.findIndex(item => item.ID === activity.ID)
+                    this.logs[idx].v_isReadMore = !this.logs[idx].v_isReadMore
                 }
             },
             mounted() {
@@ -243,9 +261,12 @@ setTimeout(_ => {
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
     hideBlockUI()
-}, 2000)
+}, 0)
 
 function hideBlockUI() {
+    if (!$.blockUI) {
+        return
+    }
     $.blockUI.defaults = {
         message: '',
         fadeIn: 0,

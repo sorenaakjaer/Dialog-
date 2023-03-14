@@ -843,8 +843,27 @@ html body {
 
 .c-logs__log {
     padding-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    max-width: 550px;
+    margin-left: 35px;
+    margin-bottom: 1rem;
+    position: relative;
 }
 
+/*
+.c-logs__log:before {
+    content: '';
+    height: 100%;
+    position: absolute;
+    left: -1rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #222;
+}
+*/
 .c-logs__log__meta {
     font-size: 12px;
 }
@@ -977,7 +996,7 @@ ul.c-logs__log__content>li.c-logs__log__content__item:not(:last-child) {
 }
 
 .c-grid__col__dialog {
-    flex: 1.5;
+    flex: 2;
 }
 
 .bg-icon-hover {
