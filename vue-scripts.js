@@ -361,7 +361,7 @@ function hideBlockUI() {
 
 function CreateCase() {
 	
-    if (submit_validation_logic() == 0)
+    if (submit_validation_logic() == true)
     {
     clearJSONfields()
     $(".webformCreateMore").click()
