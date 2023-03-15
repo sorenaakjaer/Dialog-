@@ -1185,5 +1185,5 @@ svg:not(:root) {
 }
 
 .content #webform {
-    display: none;
+    display: none !important;
 }

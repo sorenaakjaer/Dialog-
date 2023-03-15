@@ -82,8 +82,7 @@
                     :class="{'c-card__dialog__new_log--active': isNewLogFormActive}">
                     <div class="c-card__header">
                         <h4>Ny logning</h4>
-                        <div class="bg-icon-hover bg-icon-hover--light" @click.stop="closeNewLogForm"
-                            v-if="isNewLogFormActive">
+                        <div class="bg-icon-hover" @click.stop="closeNewLogForm" v-if="isNewLogFormActive">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
