@@ -1187,3 +1187,7 @@ svg:not(:root) {
 .content #webform {
     display: none !important;
 }
+
+.webformButtonPanel {
+    display: none;
+}
