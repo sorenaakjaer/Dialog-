@@ -151,7 +151,12 @@ $(document).one('trigger::vue_init', function () {
                     return logs
                 },
                 chainedLogs() {
-                    return this.chainedLogIds.map(chainArr => chainArr.map(id => this.logsMap[id]))
+                    return this.chainedLogIds.map(chainArr => chainArr.map(id => this.logsMap[id]).sort((a, b) => {
+                        const dateA = this.formatDate(a.CREATED_TIME)
+                        const dateB = this.formatDate(b.CREATED_TIME)
+                        return dateB - dateA;
+                    })
+                    )
                 }
             },
             methods: {
@@ -292,7 +297,7 @@ $(document).one('trigger::vue_init', function () {
                     var lastChild = parent.find('.c-logs__log:last-child');
                     var lastChildHeight = lastChild.outerHeight(true);
                     console.log(lastChild, lastChildHeight)
-                    var parentHeight = (parent.height() - lastChildHeight + 15);
+                    var parentHeight = (parent.height() - lastChildHeight + 16);
                     parent.find('.c-logs-chain--chained__line').height(parentHeight);
                 });
             }

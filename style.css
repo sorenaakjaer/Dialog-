@@ -912,6 +912,7 @@ html body {
     margin: 0;
     display: flex;
     align-items: center;
+    padding-right: 1rem;
 }
 
 .c-logs__log__content .c-label {
@@ -1009,10 +1010,6 @@ ul.c-logs__log__content>li.c-logs__log__content__item:not(:last-child) {
 
 .c-card__dialog {
     position: relative;
-}
-
-.c-card.c-card__dialog__new_log.c-card__dialog__new_log--active {
-    min-height: 500px;
 }
 
 .c-card.c-card__dialog__new_log .c-card__header {
