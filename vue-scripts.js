@@ -85,9 +85,18 @@ $(document).one('trigger::vue_init', function () {
                         }
                         return shortText
                     }
+                    function turnStringToArr(REF_IDS) {
+                        let refIdsArray = [];
+
+                        if (REF_IDS) {
+                            refIdsArray = REF_IDS.split(';');
+                        }
+                        return refIdsArray
+                    }
                     return this.logs.map((log) => ({
                         ...log,
                         v_MsgShort: createAShortVersionOfTheText(decodeURI(log.MSG)),
+                        v_RefIds: turnStringToArr(log.REF_IDS),
                         MSG: decodeURI(log.MSG)
                     }))
                 },
@@ -95,8 +104,54 @@ $(document).one('trigger::vue_init', function () {
                     return this.logsDecoded.sort((a, b) => {
                         const dateA = this.formatDate(a.CREATED_TIME)
                         const dateB = this.formatDate(b.CREATED_TIME)
-                        return dateA - dateB;
+                        return dateB - dateA;
                     })
+                },
+                logsMap() {
+                    return this.logsSorted.reduce((map, log) => {
+                        map[log.ID] = log;
+                        return map;
+                    }, {});
+                },
+                chainedLogIds() {
+                    const logs = []
+                    // logs = [[12645926, 12642987], 12613728], [12642299], [12645901, 12645900]]
+                    function findIndexOfValue(value, arrayOfArrays) {
+                        for (let i = 0; i < arrayOfArrays.length; i++) {
+                            const innerArray = arrayOfArrays[i];
+                            if (innerArray.includes(value)) {
+                                return i;
+                            }
+                        }
+                        return -1;
+                    }
+                    this.logsSorted.forEach(log => {
+                        const idsArr = [(log.ID).toString()].concat(log.v_RefIds)
+                        if (logs.length === 0) {
+                            logs.push(idsArr)
+                        } else {
+                            let chainIdx = -1
+                            idsArr.forEach(id => {
+                                if (findIndexOfValue(id, logs) > -1) {
+                                    chainIdx = findIndexOfValue(id, logs)
+                                }
+                            })
+                            if (chainIdx < 0) {
+                                logs.push(idsArr)
+                            } else {
+                                idsArr.forEach(id => {
+                                    const idx = logs[chainIdx].indexOf(id)
+                                    if (idx < 0) {
+                                        logs[chainIdx].push(id)
+                                    }
+                                })
+                            }
+                        }
+                    })
+                    return logs
+                },
+                chainedLogs() {
+                    return this.chainedLogIds.map(chainArr => chainArr.map(id => this.logsMap[id]))
                 }
             },
             methods: {
@@ -229,6 +284,17 @@ $(document).one('trigger::vue_init', function () {
                 // Virtual scroller
                 Vue.component('vue-virtual-scroller', window["vue-virtual-scroller"].DynamicScroller);
                 Vue.component('DynamicScrollerItem', window["vue-virtual-scroller"].DynamicScrollerItem);
+            },
+            updated() {
+                console.log('updating dom')
+                $('.c-logs__chain.c-logs-chain--chained').each(function () {
+                    var parent = $(this);
+                    var lastChild = parent.find('.c-logs__log:last-child');
+                    var lastChildHeight = lastChild.outerHeight(true);
+                    console.log(lastChild, lastChildHeight)
+                    var parentHeight = (parent.height() - lastChildHeight + 17.5);
+                    parent.find('.c-logs-chain--chained__line').height(parentHeight);
+                });
             }
         })
     })
@@ -261,7 +327,7 @@ setTimeout(_ => {
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
     hideBlockUI()
-}, 4000)
+}, 0)
 
 function hideBlockUI() {
     if (!$.blockUI) {
