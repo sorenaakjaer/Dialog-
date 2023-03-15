@@ -292,7 +292,7 @@ $(document).one('trigger::vue_init', function () {
                     var lastChild = parent.find('.c-logs__log:last-child');
                     var lastChildHeight = lastChild.outerHeight(true);
                     console.log(lastChild, lastChildHeight)
-                    var parentHeight = (parent.height() - lastChildHeight + 17.5);
+                    var parentHeight = (parent.height() - lastChildHeight + 15);
                     parent.find('.c-logs-chain--chained__line').height(parentHeight);
                 });
             }
