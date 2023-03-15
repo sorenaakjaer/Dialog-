@@ -382,13 +382,20 @@ function clearJSONfields() {
 
 
 function clear_fields_after_submit() {
-	    $(".js-clear_on_submit > textarea").val(""), 
-        $(".js-clear_on_submit > input").val(""), 
-        $(".js-clear_on_submit > div > div > :radio").prop("checked", !1), 
-        $(".js-clear_on_submit > select").prop("selectedIndex", 0), 
-        setTimeout(function () {
-		$(".Web_MainControl_upload > .UploadPanel > div > a").click()
-	    }, 3e3)
+	
+	$(".Web_MainControl").each(function () {
+	if (!$(this).hasClass('js-dont_clear_on_submit'))	
+		{
+		$(".Web_MainControl_note > textarea").val(""), 
+        	$(".Web_MainControl_textbox > input").val(""), 
+		$(".Web_MainControl > div > div > :radio").prop("checked", !1), 
+		$(".Web_MainControl > select").prop("selectedIndex", 0), 
+		setTimeout(function () {
+			$(".Web_MainControl_upload > .UploadPanel > div > a").click()
+		    }, 3e3)			
+		}
+	})
+
 }
 
 
