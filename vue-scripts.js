@@ -369,7 +369,7 @@ function CreateCase() {
     closeCreateCase()
     setTimeout(function () {
 		$(document).trigger("vue::new_case_created")
-	}, 1e3))
+	}, 1e3)
     }
 }
 
