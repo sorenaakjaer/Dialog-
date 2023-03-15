@@ -357,3 +357,75 @@ function hideBlockUI() {
         }
     }
 }
+
+
+function CreateCase() {
+	
+    if (submit_validation_logic() == 0)
+    {
+    clearJSONfields()
+    $(".webformCreateMore").click()
+    clear_fields_after_submit()
+    closeCreateCase()
+    setTimeout(function () {
+		$(document).trigger("vue::new_case_created")
+	}, 1e3))
+    }
+}
+
+function clearJSONfields() {
+	$(".output_customer_data > div").html(""), 
+    $(".output_log_data > div").html(""), 
+    $(".output_login_data > div").html(""), 
+    $(".output_log_options_data > div").html("")
+}
+
+
+function clear_fields_after_submit() {
+	    $(".js-clear_on_submit > textarea").val(""), 
+        $(".js-clear_on_submit > input").val(""), 
+        $(".js-clear_on_submit > div > div > :radio").prop("checked", !1), 
+        $(".js-clear_on_submit > select").prop("selectedIndex", 0), 
+        setTimeout(function () {
+		$(".Web_MainControl_upload > .UploadPanel > div > a").click()
+	    }, 3e3)
+}
+
+
+function submit_validation_logic() {
+	clearJSONfields();
+	var e = 0;
+	return $(".Web_MainControl").each(function () {
+		if ("none" !== $(this).css("display")) {
+			if ($(this).find(".Web_Required + a").length) {
+				var t = $(this).find(".Web_Required + a");
+				t.next("div").next(".UploadPanel").html().length < 1 ? (e++, $(this).addClass("js-input--error")) : $(this).removeClass("js-input--error")
+			}
+			if ($(this).find('.Web_Required + input[type="checkbox"]').length) {
+				var t = $(this).find('.Web_Required + input[type="checkbox"]');
+				$(t).is(":checked") ? $(this).removeClass("js-input--error") : (e++, $(this).addClass("js-input--error"))
+			}
+			if ($(this).find(".Web_Required + .Web_InnerControl > div > input").length) {
+				var t = $(this).find(".Web_Required + .Web_InnerControl > div > input");
+				$(t).is(":checked") ? $(this).removeClass("js-input--error") : (e++, $(this).addClass("js-input--error"))
+			}
+			if ($(this).find(".Web_Required + input").length) {
+				var t = $(this).find(".Web_Required + input");
+				$(t).val() ? $(t).val() && $(t).removeClass("js-input--error") : (e++, $(t).addClass("js-input--error"))
+			}
+			if ($(this).find(".Web_Required + textarea").length) {
+				var t = $(this).find(".Web_Required + textarea");
+				$(t).val() ? $(t).val() && $(t).removeClass("js-input--error") : (e++, $(t).addClass("js-input--error"))
+			}
+			if ($(this).find(".Web_Required + select").length) {
+				var t = $(this).find(".Web_Required + select");
+				$(t).val() ? $(t).val() && $(t).removeClass("js-input--error") : (e++, $(t).addClass("js-input--error"))
+			}
+		}
+	}), !(e > 0) || (console.log(e), !1)
+}
+
+function closeCreateCase() {
+}
+
+
