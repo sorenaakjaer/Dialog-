@@ -424,13 +424,6 @@ function addVueVirtualScrollerFromCDN() {
     })
 }
 
-setTimeout(_ => {
-    $(document).trigger("TRIGGER_SLOW_LOAD")
-    console.log('trigger::TRIGGER_SLOW_LOAD')
-    $('.c-init-loader').removeClass('c-init-loader--show')
-    hideBlockUI()
-}, 0)
-
 function hideBlockUI() {
     if (!$.blockUI) {
         return
@@ -529,3 +522,21 @@ function submit_validation_logic() {
 
 function closeCreateCase() {
 }
+
+// OBSERVE IF ETRAY FORM IS LOADED
+var observer = new MutationObserver(function (mutations) {
+    if ($(".output_login_data").length) {
+        observer.disconnect();
+        $(document).trigger("TRIGGER_SLOW_LOAD")
+        console.log('trigger::TRIGGER_SLOW_LOAD')
+        $('.c-init-loader').removeClass('c-init-loader--show')
+        hideBlockUI()
+        //We can disconnect observer once the element exist if we dont want observe more changes in the DOM
+    }
+});
+
+// Start observing
+observer.observe(document.body, { //document.body is node target to observe
+    childList: true, //This is a must have for the observer with subtree
+    subtree: true //Set to true if changes must also be observed in descendants.
+});
