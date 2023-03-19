@@ -369,7 +369,7 @@ $(document).one('trigger::vue_init', function () {
                             const json = JSON.parse(sanitizedJsonString);
                             callback(json);
                         } else {
-                            console.log('ANSER::EMPTY')
+                            console.log('observer::empty', { selector })
                         }
                     }, 1500)
                     function removeControlCharacters(str) {
@@ -488,6 +488,7 @@ function clearJSONfields() {
 
 
 function clear_etray_fields() {
+    console.log('clear_etray_fields()')
 
     $(".Web_MainControl").each(function () {
         if (!$(this).hasClass('js-dont_clear_on_submit')) {
@@ -557,7 +558,7 @@ function addEtrayCreateFormEventListeners() {
 function initVue() {
     $(document).trigger("TRIGGER_SLOW_LOAD")
     console.log('trigger::TRIGGER_SLOW_LOAD')
-    $("#webform").appendTo(".js-form-create-case")
+    // $("#webform").appendTo(".js-form-create-case")
     $('.c-init-loader').removeClass('c-init-loader--show')
     hideBlockUI()
 }
