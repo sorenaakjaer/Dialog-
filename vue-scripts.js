@@ -559,7 +559,7 @@ function addEtrayCreateFormEventListeners() {
 function initVue() {
     hideBlockUI()
     // $("#webform").appendTo(".js-form-create-case")
-    addEtrayCreateFormEventListeners()
+    // addEtrayCreateFormEventListeners()
     $(document).trigger("TRIGGER_SLOW_LOAD")
     console.log('trigger::TRIGGER_SLOW_LOAD')
 }
