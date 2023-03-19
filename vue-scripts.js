@@ -556,11 +556,11 @@ function addEtrayCreateFormEventListeners() {
 }
 
 function initVue() {
+    $("#webform").appendTo(".js-form-create-case")
+    hideBlockUI()
     $(document).trigger("TRIGGER_SLOW_LOAD")
     console.log('trigger::TRIGGER_SLOW_LOAD')
-    // $("#webform").appendTo(".js-form-create-case")
     $('.c-init-loader').removeClass('c-init-loader--show')
-    hideBlockUI()
 }
 
 var initTimer = setTimeout(_ => {
