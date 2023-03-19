@@ -1102,11 +1102,12 @@ svg:not(:root) {
 .c-input-group select,
 .c-input-group textarea,
 select,
-textarea {
+textarea,
+input[type="text"]:not(.input-with-button__input) {
     outline: 0 !important;
     border: 1px solid #edf2f7;
     padding: 0.5rem 1rem;
-    width: 100%;
+    width: 100% !important;
     font-size: .85rem;
     -webkit-appearance: none !important;
     background: #fff;
@@ -1117,6 +1118,7 @@ textarea {
 }
 
 input:focus,
+input[type="text"]:focus,
 textarea:focus,
 select:focus {
     border-color: var(--darkYellow);
@@ -1440,9 +1442,9 @@ select:focus {
 }
 
 .c-modal__content {
-    background-color: #fff;
     border-radius: 4px;
-    min-width: 550px;
+    width: 100vw;
+    max-width: 650px;
     min-height: 150px;
 }
 
@@ -1452,6 +1454,8 @@ select:focus {
     justify-content: space-between;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--borderColor);
+    background-color: #fff;
+    border-radius: 4px 4px 0 0;
 }
 
 .c-modal__content__header h4 {
@@ -1491,4 +1495,13 @@ select:focus {
 .c-modal__content__body {
     padding: 1rem;
     background: var(--bgColor);
+    border-radius: 0 0 4px 4px;
+    overflow: auto;
+    max-height: calc(100vh - 55px);
+}
+
+#webform .Web_MainControl {
+    margin-bottom: 1em;
+    margin-right: 0;
+    margin-left: 0;
 }
