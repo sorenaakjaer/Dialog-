@@ -40,7 +40,21 @@ $(document).one('trigger::vue_init', function () {
                 selectedMessage: '',
                 isSubmittingNewLog: false,
                 relatedLog: null,
-                isNewLogFormActive: false
+                isNewLogFormActive: false,
+                searchQuery: '',
+                debounce: null,
+                isSearchActive: false,
+                isLogFiltersActive: false,
+                activeLogFilter: { value: null, title: 'Alle' },
+                logFilters: [
+                    { value: null, title: 'Alle' },
+                    { value: 'Open', title: 'Åbne' },
+                    { value: 'Closed', title: 'Lukkede' }
+                ],
+                isModal: false,
+                theActiveLog: null,
+                theActiveLogAction: null,
+                isLoadingLogAddNote: false
             },
             computed: {
                 filteredCategories() {
@@ -85,18 +99,19 @@ $(document).one('trigger::vue_init', function () {
                         }
                         return shortText
                     }
-                    function turnStringToArr(REF_IDS) {
-                        let refIdsArray = [];
+                    function turnStringToArr(str) {
+                        let arr = [];
 
-                        if (REF_IDS) {
-                            refIdsArray = REF_IDS.split(';');
+                        if (str) {
+                            arr = str.split(';');
                         }
-                        return refIdsArray
+                        return arr
                     }
                     return this.logs.map((log) => ({
                         ...log,
                         v_MsgShort: createAShortVersionOfTheText(decodeURI(log.MSG)),
                         v_RefIds: turnStringToArr(log.REF_IDS),
+                        v_Actions: turnStringToArr(log.ACTION),
                         MSG: decodeURI(log.MSG)
                     }))
                 },
@@ -113,6 +128,17 @@ $(document).one('trigger::vue_init', function () {
                         return map;
                     }, {});
                 },
+                logsFiltered() {
+                    let logs = this.logsSorted
+                    if (this.activeLogFilter.value) {
+                        logs = this.logsSorted.filter(item => item.STATUS === this.activeLogFilter.value)
+                    }
+                    return logs.filter(item => {
+                        return Object.values(item).some(value =>
+                            String(value).toLowerCase().includes(this.searchQuery.toLowerCase())
+                        );
+                    });
+                },
                 chainedLogIds() {
                     const logs = []
                     // logs = [[12645926, 12642987], 12613728], [12642299], [12645901, 12645900]]
@@ -125,7 +151,7 @@ $(document).one('trigger::vue_init', function () {
                         }
                         return -1;
                     }
-                    this.logsSorted.forEach(log => {
+                    this.logsFiltered.forEach(log => {
                         const idsArr = [(log.ID).toString()].concat(log.v_RefIds)
                         if (logs.length === 0) {
                             logs.push(idsArr)
@@ -160,6 +186,16 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                clearSearchQuery() {
+                    this.$refs.v_search_query && (this.$refs.v_search_query.value = ""), this.searchQuery = ""
+                },
+                debounceSearch(e) {
+                    this.searchQuery = ''
+                    clearTimeout(this.debounce)
+                    this.debounce = setTimeout(() => {
+                        this.searchQuery = e.target.value
+                    }, 600)
+                },
                 formatDate(str) {
                     if (!str) {
                         return new Date()
@@ -173,6 +209,59 @@ $(document).one('trigger::vue_init', function () {
                 onSelectedCatChange() {
                     this.openNewLogForm()
                     this.selectedReason = null
+                },
+                setActionOnItem(action, activity) {
+                    if (action === 'related') {
+                        this.setRelatedCase(activity)
+                        return
+                    }
+                    this.theActiveLog = activity
+                    this.theActiveLogAction = action
+                    if (action === 'note' || action === 'close' || action === 'reopen') {
+                        this.setIsModal()
+                        this.$nextTick(_ => {
+                            this.$refs.ref_add_message_textarea.focus()
+                        })
+                        return
+                    }
+                },
+                setIsModal() {
+                    this.isModal = true
+                },
+                closeModal() {
+                    this.isModal = false
+                    this.theActiveLog = null
+                },
+                saveNoteAction(newNote) {
+                    if (this.theActiveLogAction === 'note' && newNote.length < 1) {
+                        setTimeout(_ => {
+                            this.$refs.ref_add_message_textarea.focus()
+                        }, 0)
+                        return
+                    }
+                    this.isLoadingLogAddNote = true
+                    const saveItem = {
+                        CUSTOMER_ID: this.theCustomerId,
+                        CASE_ID: this.theActiveLog.ID,
+                        ACTION: this.theActiveLogAction,
+                        MSG: newNote
+                    }
+                    console.log({ saveItem })
+                    $('.input_set_log_data > input').val(JSON.stringify(saveItem))
+                    this.observeChanges('.output_log_created', (success) => {
+                        success.forEach(logItem => {
+                            // if it exitst replace it with the new
+                            const idx = this.logs.findIndex(item => item.ID === logItem.ID)
+                            if (idx > -1) {
+                                this.$set(this.logs, idx, logItem)
+                            } else {
+                                this.logs.push(logItem)
+                            }
+                        })
+                        this.closeModal()
+                        this.isLoadingLogAddNote = false
+                    });
+                    $('.set_action > a').click();
                 },
                 setRelatedCase(log) {
                     this.relatedLog = log.ID
@@ -281,6 +370,15 @@ $(document).one('trigger::vue_init', function () {
                 setReadMoreForItem(activity) {
                     const idx = this.logs.findIndex(item => item.ID === activity.ID)
                     this.logs[idx].v_isReadMore = !this.logs[idx].v_isReadMore
+                },
+                setActiveLogFilter(filter) {
+                    this.activeLogFilter = filter
+                    this.isLogFiltersActive = false
+                },
+                closeVueDropdown() {
+                    if (this.isLogFiltersActive) {
+                        this.isLogFiltersActive = false
+                    }
                 }
             },
             mounted() {
@@ -289,17 +387,6 @@ $(document).one('trigger::vue_init', function () {
                 // Virtual scroller
                 Vue.component('vue-virtual-scroller', window["vue-virtual-scroller"].DynamicScroller);
                 Vue.component('DynamicScrollerItem', window["vue-virtual-scroller"].DynamicScrollerItem);
-            },
-            updated() {
-                console.log('updating dom')
-                $('.c-logs__chain.c-logs-chain--chained').each(function () {
-                    var parent = $(this);
-                    var lastChild = parent.find('.c-logs__log:last-child');
-                    var lastChildHeight = lastChild.outerHeight(true);
-                    console.log(lastChild, lastChildHeight)
-                    var parentHeight = (parent.height() - lastChildHeight + 16);
-                    parent.find('.c-logs-chain--chained__line').height(parentHeight);
-                });
             }
         })
     })
@@ -332,7 +419,7 @@ setTimeout(_ => {
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
     hideBlockUI()
-}, 4000)
+}, 0)
 
 function hideBlockUI() {
     if (!$.blockUI) {
@@ -432,5 +519,3 @@ function submit_validation_logic() {
 
 function closeCreateCase() {
 }
-
-
