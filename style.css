@@ -1131,7 +1131,7 @@ input[type="text"]:not(.input-with-button__input) {
     width: 100% !important;
     font-size: .85rem;
     -webkit-appearance: none !important;
-    background: #fff;
+    background-color: #fff;
     box-shadow: 0 2px 5px -1px rgb(50 50 93 / 25%), 0 1px 3px -1px rgb(0 0 0 / 30%);
     box-sizing: border-box !important;
     transition: background-color .24s, box-shadow .24s;
@@ -1148,6 +1148,14 @@ select:focus {
 .c-input-group select:hover,
 select {
     cursor: pointer;
+}
+
+select {
+    position: relative;
+    background-image: url(chevron-down.png);
+    background-repeat: no-repeat;
+    background-size: 9px;
+    background-position: calc(100% - 10px) calc(50%);
 }
 
 .expand-enter-active {

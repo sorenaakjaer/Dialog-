@@ -414,6 +414,7 @@ $(document).one('trigger::vue_init', function () {
                 $(document).on('trigger::etray_modal_close', () => {
                     this.closeEtrayModal()
                 })
+                addEtrayCreateFormEventListeners()
                 this.readUser()
             }
         })
@@ -559,7 +560,6 @@ function addEtrayCreateFormEventListeners() {
 function initVue() {
     hideBlockUI()
     $("#webform").appendTo(".js-form-create-case")
-    addEtrayCreateFormEventListeners()
     $(document).trigger("TRIGGER_SLOW_LOAD")
     console.log('trigger::TRIGGER_SLOW_LOAD')
 }
