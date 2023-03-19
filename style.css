@@ -1624,3 +1624,8 @@ select {
 .Web_MainControl_checkbox>.Web_Required+input+.CheckboxLabel {
     float: left;
 }
+
+.c-modal--hidden {
+    pointer-events: none;
+    opacity: 0;
+}
