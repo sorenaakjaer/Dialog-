@@ -828,12 +828,28 @@ html body {
     flex-wrap: wrap;
 }
 
-.c-label {
+.c-label,
+label.Web_TextLabel {
     color: #7e828c;
     font-size: 11px;
     text-transform: uppercase;
     width: 100%;
 }
+
+label.Web_TextLabel {
+    width: auto;
+    display: inline-block;
+}
+
+label.Web_TextLabel+.Web_Required {
+    width: 1rem;
+    display: inline-block;
+}
+
+select.Web_InnerControl {
+    width: 100% !important;
+}
+
 
 .c-page ul {
     margin-bottom: 0;
@@ -1085,6 +1101,7 @@ svg:not(:root) {
 
 .c-input-group select,
 .c-input-group textarea,
+select,
 textarea {
     outline: 0 !important;
     border: 1px solid #edf2f7;
@@ -1221,14 +1238,6 @@ select:focus {
     font-size: 16px;
     font-style: italic;
     color: #838383;
-}
-
-.content #webform {
-    display: none !important;
-}
-
-.webformButtonPanel {
-    display: none;
 }
 
 .c-search-group {
@@ -1433,6 +1442,8 @@ select:focus {
 .c-modal__content {
     background-color: #fff;
     border-radius: 4px;
+    min-width: 550px;
+    min-height: 150px;
 }
 
 .c-modal__content__header {

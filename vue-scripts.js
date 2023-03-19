@@ -54,7 +54,8 @@ $(document).one('trigger::vue_init', function () {
                 isModal: false,
                 theActiveLog: null,
                 theActiveLogAction: null,
-                isLoadingLogAddNote: false
+                isLoadingLogAddNote: false,
+                isEtrayModal: false
             },
             computed: {
                 filteredCategories() {
@@ -234,6 +235,7 @@ $(document).one('trigger::vue_init', function () {
                 closeModal() {
                     this.isModal = false
                     this.theActiveLog = null
+                    this.isEtrayModal = false
                 },
                 saveLogItemAction(newNote) {
                     if (this.theActiveLogAction === 'note' && newNote.length < 1) {
@@ -389,9 +391,13 @@ $(document).one('trigger::vue_init', function () {
                     if (this.isLogFiltersActive) {
                         this.isLogFiltersActive = false
                     }
+                },
+                openCreateCaseFor2ndLine() {
+                    this.isEtrayModal = true
                 }
             },
             mounted() {
+                $("#webform").appendTo(".js-form-create-case")
                 this.readUser()
                 // this.readCustomer()
                 // Virtual scroller
