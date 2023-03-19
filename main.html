@@ -313,7 +313,7 @@
                         <div class="c-form__buttons">
                             <button class="c-bttn" @click.stop="closeModal">Annullér</button>
                             <button class="c-bttn c-bttn--primary" :class="{'c-bttn--loading': isLoadingLogAddNote}"
-                                @click.stop="saveNoteAction($refs.ref_add_message_textarea.value)">
+                                @click.stop="saveLogItemAction($refs.ref_add_message_textarea.value)">
                                 <template v-if="!isLoadingLogAddNote">
                                     <template v-if="theActiveLogAction === 'note'">Gem note</template>
                                     <template v-if="theActiveLogAction === 'close'">Luk sag</template>
@@ -326,7 +326,7 @@
             </div>
         </div>
     </transition>
-    <transition name="fadeIn">
+    <transition name="opacity">
         <div class="c-modal-overlay" v-if="isModal" @click="closeModal"></div>
     </transition>
 </div>

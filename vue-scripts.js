@@ -103,6 +103,9 @@ $(document).one('trigger::vue_init', function () {
                         let arr = [];
 
                         if (str) {
+                            if (!isNaN(str)) {
+                                str = (str).toString()
+                            }
                             arr = str.split(';');
                         }
                         return arr
@@ -232,7 +235,7 @@ $(document).one('trigger::vue_init', function () {
                     this.isModal = false
                     this.theActiveLog = null
                 },
-                saveNoteAction(newNote) {
+                saveLogItemAction(newNote) {
                     if (this.theActiveLogAction === 'note' && newNote.length < 1) {
                         setTimeout(_ => {
                             this.$refs.ref_add_message_textarea.focus()
@@ -248,20 +251,24 @@ $(document).one('trigger::vue_init', function () {
                     }
                     console.log({ saveItem })
                     $('.input_set_log_data > input').val(JSON.stringify(saveItem))
-                    this.observeChanges('.output_log_created', (success) => {
-                        success.forEach(logItem => {
-                            // if it exitst replace it with the new
-                            const idx = this.logs.findIndex(item => item.ID === logItem.ID)
-                            if (idx > -1) {
-                                this.$set(this.logs, idx, logItem)
-                            } else {
-                                this.logs.push(logItem)
-                            }
-                        })
+                    this.observeChanges('.output_log_created', (jsonSucces) => {
+                        this.pushToLogs(jsonSucces)
                         this.closeModal()
                         this.isLoadingLogAddNote = false
                     });
                     $('.set_action > a').click();
+                },
+                pushToLogs(jsonSucces) {
+                    jsonSucces.forEach(logItem => {
+                        // if it exitst replace it with the new
+                        const idx = this.logs.findIndex(item => item.ID === logItem.ID)
+                        this.$set(logItem, 'v_isReadMore', false);
+                        if (idx > -1) {
+                            this.$set(this.logs, idx, logItem)
+                        } else {
+                            this.logs.push(logItem)
+                        }
+                    })
                 },
                 setRelatedCase(log) {
                     this.relatedLog = log.ID
@@ -285,13 +292,8 @@ $(document).one('trigger::vue_init', function () {
                     }]
                     $('.input_set_log_data > input').val(JSON.stringify(newLog))
                     this.isSubmittingNewLog = true
-                    this.observeChanges('.output_log_created', (success) => {
-                        console.log({ success })
-                        if (success && success.length > 0) {
-                            let log = success[0]
-                            this.$set(log, 'v_isReadMore', false);
-                            this.logs.push(log)
-                        }
+                    this.observeChanges('.output_log_created', (jsonSucces) => {
+                        this.pushToLogs(jsonSucces)
                         this.closeNewLogForm()
                     })
                     $('.set_log_data > a').click()
@@ -357,15 +359,23 @@ $(document).one('trigger::vue_init', function () {
                     }
                     el.html('')
                     let cInterval = setInterval(_ => {
-                        const str = el.html()
-                        if (str.length > 3) {
-                            console.log('observe', { selector, str })
+                        const jsonString = el.html()
+                        if (jsonString.length > 3) {
+                            console.log('observe', { selector, jsonString })
                             clearInterval(cInterval)
-                            callback(JSON.parse(decodeURI(str)));
+                            const sanitizedJsonString = removeControlCharacters(jsonString);
+                            const json = JSON.parse(sanitizedJsonString);
+                            callback(json);
                         } else {
                             console.log('ANSER::EMPTY')
                         }
                     }, 1500)
+                    function removeControlCharacters(str) {
+                        // Match any character that is not a printable ASCII character or a tab, newline, or carriage return
+                        const regex = /[\x00-\x1F\x7F]/g;
+                        // Replace any matches with an empty string
+                        return str.replace(regex, '');
+                    }
                 },
                 setReadMoreForItem(activity) {
                     const idx = this.logs.findIndex(item => item.ID === activity.ID)
@@ -419,7 +429,7 @@ setTimeout(_ => {
     console.log('trigger::TRIGGER_SLOW_LOAD')
     $('.c-init-loader').removeClass('c-init-loader--show')
     hideBlockUI()
-}, 4000)
+}, 0)
 
 function hideBlockUI() {
     if (!$.blockUI) {

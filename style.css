@@ -1456,13 +1456,13 @@ select:focus {
     transform: scale(0.80);
 }
 
-.fadeIn-enter-active,
-.fadeIn-leave-active {
+.opacity-enter-active,
+.opacity-leave-active {
     transition: opacity 0.3s;
 }
 
-.fadeIn-enter,
-.fadeIn-leave-to {
+.opacity-enter,
+.opacity-leave-to {
     opacity: 0;
 }
 
