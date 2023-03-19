@@ -286,67 +286,67 @@
             </div>
         </div>
     </div>
-    <transition name="modal">
-        <div class="c-modal" v-if="isModal">
-            <div class="c-modal__content">
-                <div class="c-modal__content__header">
-                    <h4 v-if="theActiveLogAction === 'note'">Tiløj note</h4>
-                    <h4 v-if="theActiveLogAction === 'close'">Luk sagen</h4>
-                    <h4 v-if="theActiveLogAction === 'reopen'">Genåben sagen</h4>
-                    <div class="bg-icon-hover" @click.stop="closeModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </div>
-                </div>
-                <div class="c-modal__content__body">
-                    <div>
-                        <div class="c-input-group">
-                            <label class="c-label" v-if="theActiveLogAction === 'note'">
-                                Tifløj note til sagen
-                            </label>
-                            <label class="c-label" v-else>
-                                Evt. note til sagen
-                            </label>
-                            <textarea ref="ref_add_message_textarea" rows="4" cols="50"></textarea>
-                        </div>
-                        <div class="c-form__buttons">
-                            <button class="c-bttn" @click.stop="closeModal">Annullér</button>
-                            <button class="c-bttn c-bttn--primary" :class="{'c-bttn--loading': isLoadingLogAddNote}"
-                                @click.stop="saveLogItemAction($refs.ref_add_message_textarea.value)">
-                                <template v-if="!isLoadingLogAddNote">
-                                    <template v-if="theActiveLogAction === 'note'">Gem note</template>
-                                    <template v-if="theActiveLogAction === 'close'">Luk sag</template>
-                                    <template v-if="theActiveLogAction === 'reopen'">Genåben sag</template>
-                                </template>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </transition>
-    <transition name="modal">
-        <div class="c-modal" v-show="isEtrayModal">
-            <div class="c-modal__content">
-                <div class="c-modal__content__header">
-                    <h4>Opret sag til 2ndline</h4>
-                    <div class="bg-icon-hover" @click.stop="closeEtrayModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </div>
-                </div>
-                <div class="c-modal__content__body">
-                    <div class="js-form-create-case"></div>
-                </div>
-            </div>
-        </div>
-    </transition>
-    <transition name="opacity">
-        <div class="c-modal-overlay" v-if="isModal || isEtrayModal" @click="closeModal"></div>
-    </transition>
 </div>
+<transition name="modal">
+    <div class="c-modal" v-if="isModal">
+        <div class="c-modal__content">
+            <div class="c-modal__content__header">
+                <h4 v-if="theActiveLogAction === 'note'">Tiløj note</h4>
+                <h4 v-if="theActiveLogAction === 'close'">Luk sagen</h4>
+                <h4 v-if="theActiveLogAction === 'reopen'">Genåben sagen</h4>
+                <div class="bg-icon-hover" @click.stop="closeModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+            <div class="c-modal__content__body">
+                <div>
+                    <div class="c-input-group">
+                        <label class="c-label" v-if="theActiveLogAction === 'note'">
+                            Tifløj note til sagen
+                        </label>
+                        <label class="c-label" v-else>
+                            Evt. note til sagen
+                        </label>
+                        <textarea ref="ref_add_message_textarea" rows="4" cols="50"></textarea>
+                    </div>
+                    <div class="c-form__buttons">
+                        <button class="c-bttn" @click.stop="closeModal">Annullér</button>
+                        <button class="c-bttn c-bttn--primary" :class="{'c-bttn--loading': isLoadingLogAddNote}"
+                            @click.stop="saveLogItemAction($refs.ref_add_message_textarea.value)">
+                            <template v-if="!isLoadingLogAddNote">
+                                <template v-if="theActiveLogAction === 'note'">Gem note</template>
+                                <template v-if="theActiveLogAction === 'close'">Luk sag</template>
+                                <template v-if="theActiveLogAction === 'reopen'">Genåben sag</template>
+                            </template>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</transition>
+<transition name="modal">
+    <div class="c-modal" v-show="isEtrayModal">
+        <div class="c-modal__content">
+            <div class="c-modal__content__header">
+                <h4>Opret sag til 2ndline</h4>
+                <div class="bg-icon-hover" @click.stop="closeEtrayModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+            <div class="c-modal__content__body">
+                <div class="js-form-create-case"></div>
+            </div>
+        </div>
+    </div>
+</transition>
+<transition name="opacity">
+    <div class="c-modal-overlay" v-if="isModal || isEtrayModal" @click="closeModal"></div>
+</transition>
 </div>

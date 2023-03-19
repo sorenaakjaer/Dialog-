@@ -399,8 +399,10 @@ $(document).one('trigger::vue_init', function () {
                     })
                 },
                 closeEtrayModal() {
-                    clear_etray_fields();
                     this.isEtrayModal = false
+                    this.$nextTick(_ => {
+                        clear_etray_fields();
+                    })
                 }
             },
             mounted() {
