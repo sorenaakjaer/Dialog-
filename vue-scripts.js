@@ -406,16 +406,17 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             mounted() {
-                this.readUser()
                 // this.readCustomer()
                 // Virtual scroller
                 Vue.component('vue-virtual-scroller', window["vue-virtual-scroller"].DynamicScroller);
                 Vue.component('DynamicScrollerItem', window["vue-virtual-scroller"].DynamicScrollerItem);
+                $("#webform").appendTo(".js-form-create-case")
                 addEtrayCreateFormEventListeners()
                 $(document).on('trigger::etray_modal_close', () => {
-                    console.log('vue', 'trigger::etray_modal_close')
                     this.closeEtrayModal()
                 })
+                $('.c-init-loader').removeClass('c-init-loader--show');
+                this.readUser()
             }
         })
     })
@@ -558,11 +559,9 @@ function addEtrayCreateFormEventListeners() {
 }
 
 function initVue() {
-    $("#webform").appendTo(".js-form-create-case")
     hideBlockUI()
     $(document).trigger("TRIGGER_SLOW_LOAD")
     console.log('trigger::TRIGGER_SLOW_LOAD')
-    $('.c-init-loader').removeClass('c-init-loader--show')
 }
 
 var initTimer = setTimeout(_ => {
