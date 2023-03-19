@@ -394,15 +394,26 @@ $(document).one('trigger::vue_init', function () {
                 },
                 openCreateCaseFor2ndLine() {
                     this.isEtrayModal = true
+                    this.$nextTick(_ => {
+                        $('#webform .Web_MainControl:not(.hidden_field):first > select').focus().select()
+                    })
+                },
+                closeEtrayModal() {
+                    clear_etray_fields();
+                    this.isEtrayModal = false
                 }
             },
             mounted() {
-                $("#webform").appendTo(".js-form-create-case")
                 this.readUser()
                 // this.readCustomer()
                 // Virtual scroller
                 Vue.component('vue-virtual-scroller', window["vue-virtual-scroller"].DynamicScroller);
                 Vue.component('DynamicScrollerItem', window["vue-virtual-scroller"].DynamicScrollerItem);
+                addEtrayCreateFormEventListeners()
+                $(document).on('trigger::etray_modal_close', () => {
+                    console.log('vue', 'trigger::etray_modal_close')
+                    this.closeEtrayModal()
+                })
             }
         })
     })
@@ -460,7 +471,7 @@ function CreateCase() {
     if (submit_validation_logic() == true) {
         clearJSONfields()
         $(".webformCreateMore").click()
-        clear_fields_after_submit()
+        clear_etray_fields()
         closeCreateCase()
         setTimeout(function () {
             $(document).trigger("vue::new_case_created")
@@ -469,24 +480,25 @@ function CreateCase() {
 }
 
 function clearJSONfields() {
-    $(".output_customer_data > div").html(""),
-        $(".output_log_data > div").html(""),
-        $(".output_login_data > div").html(""),
-        $(".output_log_options_data > div").html("")
+    $(".output_customer_data > div").html("")
+    $(".output_log_data > div").html("")
+    $(".output_login_data > div").html("")
+    $(".output_log_options_data > div").html("")
 }
 
 
-function clear_fields_after_submit() {
+function clear_etray_fields() {
 
     $(".Web_MainControl").each(function () {
         if (!$(this).hasClass('js-dont_clear_on_submit')) {
-            $(".Web_MainControl_note > textarea").val(""),
-                $(".Web_MainControl_textbox > input").val(""),
-                $(".Web_MainControl > div > div > :radio").prop("checked", !1),
-                $(".Web_MainControl > select").prop("selectedIndex", 0),
-                setTimeout(function () {
-                    $(".Web_MainControl_upload > .UploadPanel > div > a").click()
-                }, 3e3)
+            $(".Web_MainControl_note > textarea").val("")
+            $(".Web_MainControl_textbox > input").val("")
+            $(".Web_MainControl > div > div > :radio").prop("checked", !1)
+            $(".Web_MainControl > select").prop("selectedIndex", 0)
+            $(".Web_MainControl > select").trigger("change");
+            setTimeout(function () {
+                $(".Web_MainControl_upload > .UploadPanel > div > a").click()
+            }, 3e3)
         }
     })
 
@@ -527,19 +539,45 @@ function submit_validation_logic() {
 }
 
 function closeCreateCase() {
+    $(document).trigger('trigger::etray_modal_close')
 }
+
+function addEtrayCreateFormEventListeners() {
+    $('.Web_InnerControl_RADIOBUTTONS > div > input[type="radio"] + div').click(function () {
+        $(this).prev('input[type="radio"]').click()
+    })
+    $('.Web_MainControl_checkbox > input[type="checkbox"] + .CheckboxLabel').click(function () {
+        $(this).prev('input[type="checkbox"]').click()
+    })
+    $('.Web_MainControl_checkbox > .Web_TextDesc').click(function () {
+        $(this).next('input[type="checkbox"]').click()
+    })
+}
+
+function initVue() {
+    $(document).trigger("TRIGGER_SLOW_LOAD")
+    console.log('trigger::TRIGGER_SLOW_LOAD')
+    $("#webform").appendTo(".js-form-create-case")
+    $('.c-init-loader').removeClass('c-init-loader--show')
+    hideBlockUI()
+}
+
+var initTimer = setTimeout(_ => {
+    initVue()
+}, 4000)
 
 // OBSERVE IF ETRAY FORM IS LOADED
 var observer = new MutationObserver(function (mutations) {
     if ($(".output_login_data").length) {
         observer.disconnect();
-        $(document).trigger("TRIGGER_SLOW_LOAD")
-        console.log('trigger::TRIGGER_SLOW_LOAD')
-        $('.c-init-loader').removeClass('c-init-loader--show')
-        hideBlockUI()
+        clearTimeout(initTimer);
+        setTimeout(_ => {
+            initVue()
+        }, 1500)
         //We can disconnect observer once the element exist if we dont want observe more changes in the DOM
     }
 });
+
 
 // Start observing
 observer.observe(document.body, { //document.body is node target to observe

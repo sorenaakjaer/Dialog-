@@ -487,7 +487,9 @@ ul {
     padding: 0;
 }
 
-.c-bttn, a.c-bttn {
+.c-bttn, a.c-bttn,
+#webform .submit_btn,
+#webform .cancel_btn {
     cursor: pointer;
     text-decoration: none;
     outline: 0;
@@ -508,7 +510,10 @@ ul {
     width: fit-content;
 }
 
-.c-bttn:hover, a.c-bttn:hover {
+.c-bttn:hover, a.c-bttn:hover,
+#webform .cancel_btn:hover,
+.c-bttn:hover, a.c-bttn:focus,
+#webform .cancel_btn:focus {
     background-color: #467b97;
 }
 
@@ -521,18 +526,23 @@ ul {
     border-color: var(--borderColor);
 }
 
-.c-bttn.c-bttn--secondary:hover {
+.c-bttn.c-bttn--secondary:hover,
+.c-bttn.c-bttn--secondary:focus {
     background-color: #467b97;
     color: #fff;
 }
 
-.c-bttn.c-bttn--primary {
+.c-bttn.c-bttn--primary,
+#webform .submit_btn {
     background-color: #eeb900;
     color: #fff;
     border: 1px solid #eeb900;
 }
 
-.c-bttn.c-bttn--primary:hover {
+.c-bttn.c-bttn--primary:hover,
+#webform .submit_btn:hover,
+.c-bttn.c-bttn--primary:focus,
+#webform .submit_btn:focus {
     background-color: #be9400;
     border: 1px solid #be9400;
 }
@@ -829,21 +839,32 @@ html body {
 }
 
 .c-label,
-label.Web_TextLabel {
+label.Web_TextLabel,
+.Web_MainControl_checkbox .Web_TextDesc {
     color: #7e828c;
     font-size: 11px;
     text-transform: uppercase;
     width: 100%;
+    font-weight: bold;
 }
 
-label.Web_TextLabel {
+label.Web_TextLabel,
+.Web_MainControl_checkbox .Web_TextDesc {
     width: auto;
     display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.Web_MainControl_checkbox .Web_TextDesc {
+    margin-right: 0.5rem;
+    cursor: pointer;
 }
 
 label.Web_TextLabel+.Web_Required {
     width: 1rem;
     display: inline-block;
+    color: #7e828c !important;
 }
 
 select.Web_InnerControl {
@@ -1124,7 +1145,8 @@ select:focus {
     border-color: var(--darkYellow);
 }
 
-.c-input-group select:hover {
+.c-input-group select:hover,
+select {
     cursor: pointer;
 }
 
@@ -1471,13 +1493,11 @@ select:focus {
     transform: scale(0.80);
 }
 
-.opacity-enter-active,
-.opacity-leave-active {
+.opacity-enter-active {
     transition: opacity 0.3s;
 }
 
-.opacity-enter,
-.opacity-leave-to {
+.opacity-enter {
     opacity: 0;
 }
 
@@ -1501,7 +1521,98 @@ select:focus {
 }
 
 #webform .Web_MainControl {
-    margin-bottom: 1em;
+    margin-bottom: 0.25rem;
     margin-right: 0;
     margin-left: 0;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+#webform .SUBMIT_BTN_AREA .submit_btn {
+    float: right;
+}
+
+#webform .SUBMIT_BTN_AREA .cancel_btn {
+    float: right;
+    margin-right: 0.5rem;
+}
+
+.js-form-create-case {
+    margin: -0.5rem;
+}
+
+#webform .Web_MainControl_checkbox {
+    position: relative;
+}
+
+#webform .Web_MainControl_checkbox>input[type="checkbox"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    height: 0;
+    width: 0;
+    visibility: hidden;
+    cursor: pointer;
+}
+
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel {
+    padding-left: 24px;
+    cursor: pointer;
+    width: auto;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 19px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #7e828c;
+    position: relative;
+}
+
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:hover {
+    color: var(--primary);
+}
+
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--borderColor);
+    background-color: #ffffff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 4px;
+}
+
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border: 2px solid white;
+    border-width: 0 2px 2px 0;
+    background-color: transparent;
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    transition: transform 0.4s, backgroundColor 0.25s;
+    transform: rotate(0deg);
+}
+
+#webform .Web_MainControl_checkbox>input[type="checkbox"]:checked+.CheckboxLabel:before {
+    background-color: var(--darkYellow);
+}
+
+#webform .Web_MainControl_checkbox>input[type="checkbox"]:checked+.CheckboxLabel:after {
+    transform: rotate(40deg);
+}
+
+.Web_MainControl_checkbox>.Web_Required:first-child {
+    display: inline-block;
+    margin-left: 3px;
+    color: #7e828c !important;
+}
+
+.Web_MainControl_checkbox>.Web_Required+input+.CheckboxLabel {
+    float: left;
 }
