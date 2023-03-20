@@ -394,12 +394,14 @@ $(document).one('trigger::vue_init', function () {
                 },
                 openCreateCaseFor2ndLine() {
                     this.isEtrayModal = true
+                    $('.js-c-modal').removeClass('c-modal--hidden')
                     this.$nextTick(_ => {
                         $('#webform .Web_MainControl:not(.hidden_field):first > select').focus().select()
                     })
                 },
                 closeEtrayModal() {
                     this.isEtrayModal = false
+                    $('.js-c-modal').addClass('c-modal--hidden')
                     this.$nextTick(_ => {
                         clear_etray_fields();
                     })
@@ -542,6 +544,7 @@ function submit_validation_logic() {
 }
 
 function closeCreateCase() {
+    console.log('closeCreateCase')
     $(document).trigger('trigger::etray_modal_close')
 }
 

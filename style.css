@@ -1498,7 +1498,7 @@ select {
 
 .modal-enter,
 .modal-leave-to {
-    transform: scale(0.80);
+    transform: scale(0.9);
 }
 
 .opacity-enter-active {
@@ -1628,4 +1628,9 @@ select {
 .c-modal--hidden {
     pointer-events: none;
     opacity: 0;
+    transform: scale(0.95);
+}
+
+.c-modal--etray {
+    transition: transform 0.25s;
 }
