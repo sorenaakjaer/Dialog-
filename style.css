@@ -1555,12 +1555,12 @@ select {
 
 #webform .Web_MainControl_checkbox>input[type="checkbox"] {
     position: absolute;
+    z-index: 0;
     top: 0;
     left: 0;
     opacity: 0;
     height: 0;
     width: 0;
-    visibility: hidden;
     cursor: pointer;
 }
 
@@ -1576,6 +1576,10 @@ select {
     text-transform: uppercase;
     color: #7e828c;
     position: relative;
+}
+
+#webform .Web_MainControl_checkbox.js-checkbox--focus>.Web_TextDesc {
+    outline: 1px solid var(--darkYellow);
 }
 
 #webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:hover,

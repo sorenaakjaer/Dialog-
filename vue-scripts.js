@@ -511,45 +511,85 @@ function clear_etray_fields() {
             $this.find('textarea').val('');
             $this.find('input').val('');
             $this.find(':radio').prop('checked', false);
+            $this.find(':checkbox').prop('checked', false).trigger("change");
+            $this.removeClass('js-checkbox--checked');
         }
     });
 }
 
 function submit_validation_logic() {
     clearJSONfields();
-    var e = 0;
-    return $(".Web_MainControl").each(function () {
-        if ("none" !== $(this).css("display")) {
-            if ($(this).find(".Web_Required + a").length) {
-                var t = $(this).find(".Web_Required + a");
-                t.next("div").next(".UploadPanel").html().length < 1 ? (e++, $(this).addClass("js-input--error")) : $(this).removeClass("js-input--error")
+    var errors = 0;
+    $(".Web_MainControl").each(function () {
+        var $this = $(this);
+        if ($this.css("display") !== "none") {
+            if ($this.find(".Web_Required + a").length) {
+                var $input = $this.find(".Web_Required + a").next("div").next(".UploadPanel");
+                if ($input.html().length < 1) {
+                    errors++;
+                    $this.addClass("js-input--error");
+                } else {
+                    $this.removeClass("js-input--error");
+                }
             }
-            if ($(this).find('.Web_Required + input[type="checkbox"]').length) {
-                var t = $(this).find('.Web_Required + input[type="checkbox"]');
-                $(t).is(":checked") ? $(this).removeClass("js-input--error") : (e++, $(this).addClass("js-input--error"))
+            if ($this.find('.Web_Required + input[type="checkbox"]').length) {
+                var $input = $this.find('.Web_Required + input[type="checkbox"]');
+                if ($input.is(":checked")) {
+                    $this.removeClass("js-input--error");
+                } else {
+                    errors++;
+                    $this.addClass("js-input--error");
+                }
             }
-            if ($(this).find(".Web_Required + .Web_InnerControl > div > input").length) {
-                var t = $(this).find(".Web_Required + .Web_InnerControl > div > input");
-                $(t).is(":checked") ? $(this).removeClass("js-input--error") : (e++, $(this).addClass("js-input--error"))
+            if ($this.find(".Web_Required + .Web_InnerControl > div > input").length) {
+                var $input = $this.find(".Web_Required + .Web_InnerControl > div > input");
+                if ($input.is(":checked")) {
+                    $this.removeClass("js-input--error");
+                } else {
+                    errors++;
+                    $this.addClass("js-input--error");
+                }
             }
-            if ($(this).find(".Web_Required + input").length) {
-                var t = $(this).find(".Web_Required + input");
-                $(t).val() ? $(t).val() && $(t).removeClass("js-input--error") : (e++, $(t).addClass("js-input--error"))
+            if ($this.find(".Web_Required + input").length) {
+                var $input = $this.find(".Web_Required + input");
+                if ($input.val()) {
+                    $input.removeClass("js-input--error");
+                } else {
+                    errors++;
+                    $input.addClass("js-input--error");
+                }
             }
-            if ($(this).find(".Web_Required + textarea").length) {
-                var t = $(this).find(".Web_Required + textarea");
-                $(t).val() ? $(t).val() && $(t).removeClass("js-input--error") : (e++, $(t).addClass("js-input--error"))
+            if ($this.find(".Web_Required + textarea").length) {
+                var $input = $this.find(".Web_Required + textarea");
+                if ($input.val()) {
+                    $input.removeClass("js-input--error");
+                } else {
+                    errors++;
+                    $input.addClass("js-input--error");
+                }
             }
-            if ($(this).find(".Web_Required + select").length) {
-                var t = $(this).find(".Web_Required + select");
-                $(t).val() ? $(t).val() && $(t).removeClass("js-input--error") : (e++, $(t).addClass("js-input--error"))
+            if ($this.find(".Web_Required + select").length) {
+                var $input = $this.find(".Web_Required + select");
+                if ($input.val()) {
+                    $input.removeClass("js-input--error");
+                } else {
+                    errors++;
+                    $input.addClass("js-input--error");
+                }
             }
         }
-    }), !(e > 0) || (console.log(e), !1)
-    $('.js-input--error').on('keyup change', function () {
-        $(this).removeClass('js-input--error')
-    })
+    });
+    if (errors > 0) {
+        console.log(errors);
+        $('.js-input--error').on('keyup change', function () {
+            $(this).removeClass('js-input--error');
+        });
+        return false;
+    } else {
+        return true;
+    }
 }
+
 
 function closeCreateCase() {
     //evt.preventDefault()
@@ -571,6 +611,17 @@ function addEtrayCreateFormEventListeners() {
             $checkbox.parent().addClass('js-checkbox--checked');
         } else {
             $checkbox.parent().removeClass('js-checkbox--checked');
+        }
+    });
+    $(".Web_MainControl:not(.js-dont_clear_on_submit)").each(function (index) {
+        const $this = $(this);
+        const $checkbox = $this.find('input[type="checkbox"]');
+        if ($checkbox.length) {
+            $checkbox.focus(function () {
+                $this.addClass('js-checkbox--focus');
+            }).blur(function () {
+                $this.removeClass('js-checkbox--focus');
+            });
         }
     });
 }
