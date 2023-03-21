@@ -1634,3 +1634,8 @@ select {
 .c-modal--etray {
     transition: transform 0.25s;
 }
+
+.c-input-group__submit {
+    display: flex;
+    justify-content: flex-end;
+}

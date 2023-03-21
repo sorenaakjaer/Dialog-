@@ -113,10 +113,10 @@ $(document).one('trigger::vue_init', function () {
                     }
                     return this.logs.map((log) => ({
                         ...log,
-                        v_MsgShort: createAShortVersionOfTheText(decodeURI(log.MSG)),
+                        v_MsgShort: createAShortVersionOfTheText(this.cDecode(log.MSG)),
                         v_RefIds: turnStringToArr(log.REF_IDS),
                         v_Actions: turnStringToArr(log.ACTION),
-                        MSG: decodeURI(log.MSG)
+                        MSG: this.cDecode(log.MSG)
                     }))
                 },
                 logsSorted() {
@@ -190,6 +190,13 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                cDecode(encodedString) {
+                    let temporaryElement = document.createElement("div");
+                    temporaryElement.innerHTML = encodedString;
+                    let decodedString = temporaryElement.textContent;
+                    console.log(decodedString);
+                    return decodedString
+                },
                 clearSearchQuery() {
                     this.$refs.v_search_query && (this.$refs.v_search_query.value = ""), this.searchQuery = ""
                 },
@@ -290,7 +297,7 @@ $(document).one('trigger::vue_init', function () {
                         CAT: this.selectedCat,
                         REASON: this.selectedReason,
                         RESULT: this.selectedResult,
-                        MSG: encodeURI(this.selectedMessage)
+                        MSG: this.selectedMessage
                     }]
                     $('.input_set_log_data > input').val(JSON.stringify(newLog))
                     this.isSubmittingNewLog = true
@@ -366,7 +373,8 @@ $(document).one('trigger::vue_init', function () {
                             console.log('observe', { selector, jsonString })
                             clearInterval(cInterval)
                             const sanitizedJsonString = removeControlCharacters(jsonString);
-                            const json = JSON.parse(sanitizedJsonString);
+                            const decoded = this.cDecode(sanitizedJsonString);
+                            const json = JSON.parse(decoded);
                             callback(json);
                         } else {
                             console.log('observer::empty', { selector })
@@ -490,25 +498,17 @@ function clearJSONfields() {
     $(".output_log_options_data > div").html("")
 }
 
-
 function clear_etray_fields() {
-    console.log('clear_etray_fields()')
-
-    $(".Web_MainControl").each(function () {
-        if (!$(this).hasClass('js-dont_clear_on_submit')) {
-            $(".Web_MainControl_note > textarea").val("")
-            $(".Web_MainControl_textbox > input").val("")
-            $(".Web_MainControl > div > div > :radio").prop("checked", !1)
-            $(".Web_MainControl > select").prop("selectedIndex", 0)
-            $(".Web_MainControl > select").trigger("change");
-            setTimeout(function () {
-                $(".Web_MainControl_upload > .UploadPanel > div > a").click()
-            }, 3e3)
+    $(".Web_MainControl").each(function (index) {
+        const $this = $(this);
+        if (!$this.hasClass('js-dont_clear_on_submit')) {
+            $this.find('select').prop("selectedIndex", 0).trigger("change");
+            $this.find('textarea').val('');
+            $this.find('input').val('');
+            $this.find(':radio').prop('checked', false);
         }
-    })
-
+    });
 }
-
 
 function submit_validation_logic() {
     clearJSONfields();
@@ -543,7 +543,8 @@ function submit_validation_logic() {
     }), !(e > 0) || (console.log(e), !1)
 }
 
-function closeCreateCase() {
+function closeCreateCase(evt) {
+    evt.preventDefault()
     console.log('closeCreateCase')
     $(document).trigger('trigger::etray_modal_close')
 }
