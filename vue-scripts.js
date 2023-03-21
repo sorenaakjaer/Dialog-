@@ -28,7 +28,7 @@ $(document).one('trigger::vue_init', function () {
                 theCustomer: null,
                 theCustomerId: null,
                 isTheCustomerLoading: false,
-                theCustomerPhoneNumber: '20163673',
+                theCustomerPhoneNumber: '22669000',
                 theCustomerPhoneNumberHasError: false,
                 logs: [],
                 isLogLoading: false,
@@ -334,13 +334,7 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_customer_data > a').click();
 
                     // Read customer log
-                    this.observeChanges('.output_log_data', (success) => {
-                        this.logs = success
-                        this.logs.forEach(log => {
-                            this.$set(log, 'v_isReadMore', false);
-                        })
-                    });
-                    $('.get_log_data > a').click();
+                    this.readCustomerLog()
 
                     // Read customer new logging options
                     this.observeChanges('.output_log_options_data', (success) => {
@@ -348,6 +342,15 @@ $(document).one('trigger::vue_init', function () {
                         this.resultOptions = success && success['result_options'] ? success['result_options'] : []
                     });
                     $('.get_log_options_data > a').click()
+                },
+                readCustomerLog() {
+                    this.observeChanges('.output_log_data', (success) => {
+                        this.logs = success
+                        this.logs.forEach(log => {
+                            this.$set(log, 'v_isReadMore', false);
+                        })
+                    });
+                    $('.get_log_data > a').click();
                 },
                 readUser() {
                     this.isUserLoading = true
@@ -424,6 +427,9 @@ $(document).one('trigger::vue_init', function () {
                 $(document).on('trigger::etray_modal_close', () => {
                     this.closeEtrayModal()
                 })
+                $(document).on('vue::new_case_created', () => {
+                    this.readCustomerLog()
+                })
                 addEtrayCreateFormEventListeners()
                 this.readUser()
             }
@@ -479,15 +485,14 @@ function hideBlockUI() {
 
 
 function CreateCase() {
-
-    if (submit_validation_logic() == true) {
-        clearJSONfields()
-        $(".webformCreateMore").click()
-        clear_etray_fields()
-        closeCreateCase()
+    if (submit_validation_logic()) {
+        clearJSONfields();
+        $(".webformCreateMore").click();
+        clear_etray_fields();
+        closeCreateCase();
         setTimeout(function () {
-            $(document).trigger("vue::new_case_created")
-        }, 1e3)
+            $(document).trigger("vue::new_case_created");
+        }, 1000);
     }
 }
 
@@ -590,3 +595,7 @@ observer.observe(document.body, { //document.body is node target to observe
     childList: true, //This is a must have for the observer with subtree
     subtree: true //Set to true if changes must also be observed in descendants.
 });
+
+$('.js-input--error').on('keyup change', function () {
+    $(this).removeClass('js-input--error')
+})

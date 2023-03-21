@@ -1639,3 +1639,7 @@ select {
     display: flex;
     justify-content: flex-end;
 }
+
+.js-input--error {
+    border: 1px solid #e00000 !important;
+}
