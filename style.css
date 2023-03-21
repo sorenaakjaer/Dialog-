@@ -1564,7 +1564,8 @@ select {
     cursor: pointer;
 }
 
-#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel {
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel,
+#webform .Web_MainControl_checkbox>.Web_TextDesc {
     padding-left: 24px;
     cursor: pointer;
     width: auto;
@@ -1577,11 +1578,13 @@ select {
     position: relative;
 }
 
-#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:hover {
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:hover,
+#webform .Web_MainControl_checkbox>.Web_TextDesc:hover {
     color: var(--primary);
 }
 
-#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:before {
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:before,
+#webform .Web_MainControl_checkbox>.Web_TextDesc:before {
     content: '';
     width: 16px;
     height: 16px;
@@ -1593,7 +1596,8 @@ select {
     border-radius: 4px;
 }
 
-#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:after {
+#webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:after,
+#webform .Web_MainControl_checkbox>.Web_TextDesc:after {
     content: '';
     width: 4px;
     height: 8px;
@@ -1607,11 +1611,13 @@ select {
     transform: rotate(0deg);
 }
 
-#webform .Web_MainControl_checkbox>input[type="checkbox"]:checked+.CheckboxLabel:before {
+#webform .Web_MainControl_checkbox>input[type="checkbox"]:checked+.CheckboxLabel:before,
+#webform .Web_MainControl_checkbox.js-checkbox--checked>.Web_TextDesc:before {
     background-color: var(--darkYellow);
 }
 
-#webform .Web_MainControl_checkbox>input[type="checkbox"]:checked+.CheckboxLabel:after {
+#webform .Web_MainControl_checkbox>input[type="checkbox"]:checked+.CheckboxLabel:after,
+#webform .Web_MainControl_checkbox.js-checkbox--checked>.Web_TextDesc:after {
     transform: rotate(40deg);
 }
 
@@ -1642,4 +1648,8 @@ select {
 
 .js-input--error {
     border: 1px solid #e00000 !important;
+}
+
+.webformButtonPanel {
+    display: none
 }

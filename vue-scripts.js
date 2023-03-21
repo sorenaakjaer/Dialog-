@@ -546,6 +546,9 @@ function submit_validation_logic() {
             }
         }
     }), !(e > 0) || (console.log(e), !1)
+    $('.js-input--error').on('keyup change', function () {
+        $(this).removeClass('js-input--error')
+    })
 }
 
 function closeCreateCase() {
@@ -562,8 +565,14 @@ function addEtrayCreateFormEventListeners() {
         $(this).prev('input[type="checkbox"]').click()
     })
     $('.Web_MainControl_checkbox > .Web_TextDesc').click(function () {
-        $(this).next('input[type="checkbox"]').click()
-    })
+        const $checkbox = $(this).next('input[type="checkbox"]');
+        $checkbox.prop('checked', !$checkbox.prop('checked'));
+        if ($checkbox.prop('checked')) {
+            $checkbox.parent().addClass('js-checkbox--checked');
+        } else {
+            $checkbox.parent().removeClass('js-checkbox--checked');
+        }
+    });
 }
 
 function initVue() {
@@ -595,7 +604,3 @@ observer.observe(document.body, { //document.body is node target to observe
     childList: true, //This is a must have for the observer with subtree
     subtree: true //Set to true if changes must also be observed in descendants.
 });
-
-$('.js-input--error').on('keyup change', function () {
-    $(this).removeClass('js-input--error')
-})
