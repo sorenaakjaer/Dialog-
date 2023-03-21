@@ -181,7 +181,7 @@ $(document).one('trigger::vue_init', function () {
                     return logs
                 },
                 chainedLogs() {
-                    return this.chainedLogIds.map(chainArr => chainArr.map(id => this.logsMap[id]).sort((a, b) => {
+                    return this.chainedLogIds.map(chainArr => chainArr.filter(id => this.logsMap[id]).map(id => this.logsMap[id]).sort((a, b) => {
                         const dateA = this.formatDate(a.CREATED_TIME)
                         const dateB = this.formatDate(b.CREATED_TIME)
                         return dateB - dateA;
