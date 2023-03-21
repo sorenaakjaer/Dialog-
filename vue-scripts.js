@@ -543,8 +543,8 @@ function submit_validation_logic() {
     }), !(e > 0) || (console.log(e), !1)
 }
 
-function closeCreateCase(evt) {
-    evt.preventDefault()
+function closeCreateCase() {
+    //evt.preventDefault()
     console.log('closeCreateCase')
     $(document).trigger('trigger::etray_modal_close')
 }
