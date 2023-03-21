@@ -607,11 +607,6 @@ function addEtrayCreateFormEventListeners() {
     $('.Web_MainControl_checkbox > .Web_TextDesc').click(function () {
         const $checkbox = $(this).next('input[type="checkbox"]');
         $checkbox.prop('checked', !$checkbox.prop('checked'));
-        if ($checkbox.prop('checked')) {
-            $checkbox.parent().addClass('js-checkbox--checked');
-        } else {
-            $checkbox.parent().removeClass('js-checkbox--checked');
-        }
     });
     $(".Web_MainControl:not(.js-dont_clear_on_submit)").each(function (index) {
         const $this = $(this);
@@ -621,6 +616,12 @@ function addEtrayCreateFormEventListeners() {
                 $this.addClass('js-checkbox--focus');
             }).blur(function () {
                 $this.removeClass('js-checkbox--focus');
+            }).change(function () {
+                if ($checkbox.prop('checked')) {
+                    $checkbox.parent().addClass('js-checkbox--checked');
+                } else {
+                    $checkbox.parent().removeClass('js-checkbox--checked');
+                }
             });
         }
     });

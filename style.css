@@ -1578,8 +1578,10 @@ select {
     position: relative;
 }
 
+#webform .Web_MainControl_checkbox>input[type="checkbox"]:focus+.CheckboxLabel,
 #webform .Web_MainControl_checkbox.js-checkbox--focus>.Web_TextDesc {
     outline: 1px solid var(--darkYellow);
+    border-radius: 4px;
 }
 
 #webform .Web_MainControl_checkbox>input[type="checkbox"]+.CheckboxLabel:hover,
@@ -1656,4 +1658,8 @@ select {
 
 .webformButtonPanel {
     display: none
+}
+
+.SUBMIT_BTN_AREA>div {
+    float: right
 }
