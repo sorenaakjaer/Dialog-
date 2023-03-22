@@ -496,10 +496,10 @@ $(document).one('trigger::vue_init', function () {
                         console.warn(`No element found with selector ${selector > div}`);
                         return;
                     }
-                    el.html('')
+                    el.html('loading')
                     let cInterval = setInterval(_ => {
                         const jsonString = el.html()
-                        if (jsonString.length > 3) {
+                        if (jsonString !== 'loading') {
                             console.log('observe', { selector, jsonString })
                             clearInterval(cInterval)
                             const sanitizedJsonString = removeControlCharacters(jsonString);
@@ -509,7 +509,7 @@ $(document).one('trigger::vue_init', function () {
                         } else {
                             console.log('observer::empty', { selector })
                         }
-                    }, 1500)
+                    }, 1000)
                     function removeControlCharacters(str) {
                         // Match any character that is not a printable ASCII character or a tab, newline, or carriage return
                         const regex = /[\x00-\x1F\x7F]/g;
