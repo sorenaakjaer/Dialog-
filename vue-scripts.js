@@ -55,9 +55,20 @@ $(document).one('trigger::vue_init', function () {
                 theActiveLog: null,
                 theActiveLogAction: null,
                 isLoadingLogAddNote: false,
-                isEtrayModal: false
+                isEtrayModal: false,
+                isMessageModal: false,
+                theMessageTemplates: [],
+                selectedTemplate: '',
+                activeMessageType: 'email',
+                theMessageSubject: null,
+                theMessageMessage: '',
+                theMessageFormErrors: {},
+                isSendingMessage: false
             },
             computed: {
+                theMessageTemplatesFiltered() {
+                    return this.theMessageTemplates.filter(template => template.TYPE === this.activeMessageType)
+                },
                 filteredCategories() {
                     const cats = []
                     this.loggingOptions.forEach(item => {
@@ -200,6 +211,74 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                setActiveMessageType(messageType) {
+                    this.activeMessageType = messageType
+                    this.theMessageFormErrors = {}
+                },
+                clearFormError(fieldName) {
+                    // clear the error message for the given field name
+                    this.$set(this.theMessageFormErrors, fieldName, null);
+                },
+                sendMessage() {
+                    // reset form errors
+                    this.theMessageFormErrors = {};
+
+                    // perform form validation based on activeMessageType
+                    if (this.activeMessageType === 'email') {
+                        if (!this.theMessageSubject || !this.theMessageSubject.trim()) {
+                            this.$set(this.theMessageFormErrors, 'subject', 'Emnefelt skal udfyldes')
+                        }
+                        if (!this.theMessageMessage || !this.theMessageMessage.trim()) {
+                            this.$set(this.theMessageFormErrors, 'message', 'Besked skal udfyldes')
+                        }
+                    } else if (this.activeMessageType === 'sms') {
+                        if (!this.theMessageMessage || !this.theMessageMessage.trim()) {
+                            this.$set(this.theMessageFormErrors, 'message', 'Besked skal udfyldes')
+                        }
+                    }
+                    // check if there are any form errors
+                    if (Object.keys(this.theMessageFormErrors).length > 0) {
+                        return;
+                    }
+                    this.isSendingMessage = true
+                    const theMessage = [{
+                        CUSTOMER_ID: this.theCustomerId,
+                        TYPE: this.activeMessageType.toUpperCase(),
+                        SUBJECT: this.activeMessageType === 'sms' ? null : this.theMessageSubject,
+                        MSG: this.theMessageMessage,
+                        RECIEVER: this.theCustomerId
+                    }]
+                    $('.input_set_log_data > input').val(JSON.stringify(theMessage))
+                    this.observeChanges('.output_log_created', (jsonSucces) => {
+                        this.pushToLogs(jsonSucces)
+                        this.closeModal()
+                    });
+                    $('.send_msg > a').click();
+                },
+                setStandardTemplate(templateName) {
+                    this.theMessageSubject = null
+                    this.theMessageMessage = ''
+                    this.theMessageFormErrors = {};
+                    const template = this.theMessageTemplatesFiltered.find(temp => temp.DISPLAY_NAME === templateName);
+                    if (template) {
+                        this.theMessageSubject = template.SUBJECT
+                        this.theMessageMessage = template.BODY_TEXT
+                            .replace(/%ETRAY:CUSTOMER_NAME%/g, this.theCustomer.CUSTOMER_FIRST_NAME ? this.theCustomer.CUSTOMER_FIRST_NAME : '')
+                            .replace(/%ETRAY:WF_USER_NAME%/g, this.user.USER_DISPLAY_NAME);
+                    }
+                },
+                openIsMessageModal() {
+                    this.isMessageModal = true
+                    this.isModal = true
+                },
+                closeIsMessageModal() {
+                    this.isMessageModal = false
+                    this.theMessageSubject = null
+                    this.theMessageMessage = ''
+                    this.selectedTemplate = ''
+                    this.isSendingMessage = false
+                    this.theMessageFormErrors = {}
+                },
                 cDecode(encodedString) {
                     let temporaryElement = document.createElement("div");
                     temporaryElement.innerHTML = encodedString;
@@ -266,7 +345,9 @@ $(document).one('trigger::vue_init', function () {
                     this.isModal = true
                 },
                 closeModal() {
+                    this.closeIsMessageModal()
                     this.isModal = false
+                    this.theActiveLogAction = null
                     this.theActiveLog = null
                     this.isEtrayModal = false
                 },
@@ -403,6 +484,9 @@ $(document).one('trigger::vue_init', function () {
                         this.$nextTick(_ => {
                             this.$refs.customer_number_input.focus()
                         })
+                    });
+                    this.observeChanges('.output_templates', (success) => {
+                        this.theMessageTemplates = success
                     });
                     $('.get_login_data > a').click();
                 },

@@ -1697,3 +1697,56 @@ select {
     padding: 0.5rem;
     font-style: italic;
 }
+
+.c-filters {
+    display: flex;
+}
+
+.c-filters__filter {
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    border-bottom: 0;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: -1px;
+}
+
+.c-filters__filter--active {
+    background: var(--bgColor);
+    border: 1px solid var(--borderColor);
+    border-bottom: transparent;
+    font-weight: bold;
+}
+
+.c-send-message__form {
+    border: 1px solid var(--borderColor);
+    padding: 0.5rem;
+    border-radius: 0 4px 4px 4px;
+    background: var(--bgColor);
+}
+
+.c-send-message__form>.c-input-group {
+    margin-bottom: 0.5rem;
+}
+
+.c-send-message__form>.c-input-group textarea {
+    min-height: 150px;
+}
+
+.c-input-group__submit button {
+    margin-left: 0.5rem;
+}
+
+.c-send-message__form>.c-input-group.js-input--error {
+    border: none !important;
+}
+
+.c-send-message__form>.c-input-group.js-input--error>input[type="text"],
+.c-send-message__form>.c-input-group.js-input--error>textarea {
+    border-color: var(--red);
+}
+
+.c-input-error {
+    font-size: 12px;
+    margin: 0.25rem 0;
+    color: var(--red);
+}
