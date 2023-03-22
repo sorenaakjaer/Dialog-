@@ -374,6 +374,7 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_log_options_data > a').click()
                 },
                 readCustomerLog() {
+                    $('.input_customer_id > input').val(this.theCustomerPhoneNumber)
                     this.isLogLoading = true
                     this.observeChanges('.output_log_data', (success) => {
                         this.logs = success
