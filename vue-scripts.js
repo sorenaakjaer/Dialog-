@@ -385,7 +385,7 @@ $(document).one('trigger::vue_init', function () {
                         })
                         this.isLogLoading = false
                     });
-                    console.log('$('.input_customer_id > input').val()', $('.input_customer_id > input').val(), this.theCustomerPhoneNumber)
+                    console.log('.input_customer_id > input', $('.input_customer_id > input').val(), this.theCustomerPhoneNumber)
                     $('.get_log_data > a').click();
                 },
                 readUser() {
