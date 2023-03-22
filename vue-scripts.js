@@ -63,7 +63,8 @@ $(document).one('trigger::vue_init', function () {
                 theMessageSubject: null,
                 theMessageMessage: '',
                 theMessageFormErrors: {},
-                isSendingMessage: false
+                isSendingMessage: false,
+                theMessageEmailAddress: ''
             },
             computed: {
                 theMessageTemplatesFiltered() {
@@ -226,16 +227,20 @@ $(document).one('trigger::vue_init', function () {
                     // perform form validation based on activeMessageType
                     if (this.activeMessageType === 'email') {
                         if (!this.theMessageSubject || !this.theMessageSubject.trim()) {
-                            this.$set(this.theMessageFormErrors, 'subject', 'Emnefelt skal udfyldes')
+                            this.$set(this.theMessageFormErrors, 'subject', 'Emnefelt skal udfyldes');
                         }
                         if (!this.theMessageMessage || !this.theMessageMessage.trim()) {
-                            this.$set(this.theMessageFormErrors, 'message', 'Besked skal udfyldes')
+                            this.$set(this.theMessageFormErrors, 'message', 'Besked skal udfyldes');
+                        }
+                        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.theMessageEmailAddress)) {
+                            this.$set(this.theMessageFormErrors, 'email', 'Ugyldig emailadresse');
                         }
                     } else if (this.activeMessageType === 'sms') {
                         if (!this.theMessageMessage || !this.theMessageMessage.trim()) {
-                            this.$set(this.theMessageFormErrors, 'message', 'Besked skal udfyldes')
+                            this.$set(this.theMessageFormErrors, 'message', 'Besked skal udfyldes');
                         }
                     }
+
                     // check if there are any form errors
                     if (Object.keys(this.theMessageFormErrors).length > 0) {
                         return;
@@ -270,6 +275,7 @@ $(document).one('trigger::vue_init', function () {
                 openIsMessageModal() {
                     this.isMessageModal = true
                     this.isModal = true
+                    this.theMessageEmailAddress = this.theCustomer.CUSTOMER_EMAIL ? this.theCustomer.CUSTOMER_EMAIL : ''
                 },
                 closeIsMessageModal() {
                     this.isMessageModal = false
@@ -504,7 +510,7 @@ $(document).one('trigger::vue_init', function () {
                             clearInterval(cInterval)
                             const sanitizedJsonString = removeControlCharacters(jsonString);
                             const decoded = this.cDecode(sanitizedJsonString);
-                            const json = JSON.parse(decoded);
+                            const json = decoded.length > 1 ? JSON.parse(decoded) : []
                             callback(json);
                         } else {
                             console.log('observer::empty', { selector })

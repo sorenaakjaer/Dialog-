@@ -54,14 +54,19 @@
                     </div>
                     <div class="c-card__body pad-1">
                         <div class="the-customer" v-if="theCustomer">
-                            <ul class="marg-1-bottom">
+                            <ul class="marg-1-bottom" v-if="theCustomer.CUSTOMER_FIRST_NAME && false">
                                 <li>{{ theCustomer.CUSTOMER_FIRST_NAME }} {{ theCustomer.CUSTOMER_LAST_NAME }}</li>
                                 <li>{{ theCustomer.CUSTOMER_ADDRESS }}</li>
                                 <li>{{ theCustomer.CUSTOMER_ZIP }} {{ theCustomer.CUSTOMER_CITY }}</li>
                             </ul>
+                            <h4 class="text-explainer c-customer--not-found">Kunden er ikke fundet</h4>
                             <ul>
                                 <li><label class="c-label">Mobilnummer</label>{{ theCustomer.vPhone }}</li>
-                                <li><label class="c-label">Email</label>{{ theCustomer.CUSTOMER_EMAIL }}</li>
+                                <li><label class="c-label">Email</label>
+                                    <template v-if="theCustomer.CUSTOMER_EMAIL">{{ theCustomer.CUSTOMER_EMAIL
+                                        }}</template>
+                                    <template v-else>-</template>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -76,7 +81,7 @@
                                 Opret sag til 2ndline
                             </button>
                             <button class="c-bttn c-bttn--blue" @click="openIsMessageModal">
-                                Send SMS eller EMAIL
+                                Send besked til kunden
                             </button>
                         </div>
                     </div>
@@ -350,8 +355,17 @@
                                     {{ template.DISPLAY_NAME }}
                                 </option>
                             </select>
-
                         </div>
+                        <div class="c-input-group" v-if="activeMessageType === 'email'" :class="{
+                            'js-input--error': theMessageFormErrors.email,
+                            }">
+                            <label class="c-label">Email</label>
+                            <input type="text" v-model="theMessageEmailAddress" @keyup="clearFormError('email')" />
+                            <div class="c-input-error" v-if="theMessageFormErrors.email">
+                                {{ theMessageFormErrors.email }}
+                            </div>
+                        </div>
+
                         <div class="c-input-group" v-if="activeMessageType === 'email'" :class="{
                             'js-input--error': theMessageFormErrors.subject,
                             }">

@@ -821,6 +821,7 @@ html body {
     border-radius: 4px 4px 0 0;
     padding: 0.5rem 1rem;
     border-bottom: 1px solid #eee;
+    min-height: 50px;
 }
 
 .c-card__header h4 {
@@ -1749,4 +1750,8 @@ select {
     font-size: 12px;
     margin: 0.25rem 0;
     color: var(--red);
+}
+
+.c-customer--not-found.text-explainer {
+    margin: 0 0 0.5rem 0;
 }
