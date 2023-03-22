@@ -246,7 +246,7 @@ $(document).one('trigger::vue_init', function () {
                         TYPE: this.activeMessageType.toUpperCase(),
                         SUBJECT: this.activeMessageType === 'sms' ? null : this.theMessageSubject,
                         MSG: this.theMessageMessage,
-                        RECIEVER: this.theCustomerId
+                        RECIEVER: this.activeMessageType === 'sms' ? this.theCustomerId : this.theCustomer.CUSTOMER_EMAIL
                     }]
                     $('.input_set_log_data > input').val(JSON.stringify(theMessage))
                     this.observeChanges('.output_log_created', (jsonSucces) => {
