@@ -111,11 +111,21 @@ $(document).one('trigger::vue_init', function () {
                         }
                         return arr
                     }
+
+                    function jsonParseString(str) {
+                        let arr = []
+                        if (str) {
+                            arr = JSON.parse(str)
+                        }
+                        return arr
+                    }
+
                     return this.logs.map((log) => ({
                         ...log,
                         v_MsgShort: createAShortVersionOfTheText(this.cDecode(log.MSG)),
                         v_RefIds: turnStringToArr(log.REF_IDS),
                         v_Actions: turnStringToArr(log.ACTION),
+                        v_notes: jsonParseString(log.LIST_OF_NOTES),
                         MSG: this.cDecode(log.MSG)
                     }))
                 },
@@ -217,9 +227,25 @@ $(document).one('trigger::vue_init', function () {
                     const formattedDate = new Date(`${month}/${day}/${year} ${hours}:${minutes}`);
                     return formattedDate;
                 },
-                onSelectedCatChange() {
-                    this.openNewLogForm()
-                    this.selectedReason = null
+                onSelectedChange(val) {
+                    if (val === 'category') {
+                        this.openNewLogForm()
+                        this.selectedReason = null
+                        this.$nextTick(_ => {
+                            this.$refs.new_log_reason.focus()
+                        })
+                    }
+                    if (val === 'reason') {
+                        this.selectedResult = null
+                        this.$nextTick(_ => {
+                            this.$refs.new_log_result.focus()
+                        })
+                    }
+                    if (val === 'result') {
+                        this.$nextTick(_ => {
+                            this.$refs.new_log_message.focus()
+                        })
+                    }
                 },
                 setActionOnItem(action, activity) {
                     if (action === 'related') {
@@ -280,8 +306,12 @@ $(document).one('trigger::vue_init', function () {
                     })
                 },
                 setRelatedCase(log) {
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
                     this.relatedLog = log.ID
                     this.isNewLogFormActive = true
+                    this.$nextTick(_ => {
+                        this.$refs.new_log_category.focus()
+                    })
                 },
                 openNewLogForm() {
                     this.isNewLogFormActive = true
@@ -344,11 +374,14 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_log_options_data > a').click()
                 },
                 readCustomerLog() {
+                    this.isLogLoading = true
                     this.observeChanges('.output_log_data', (success) => {
                         this.logs = success
                         this.logs.forEach(log => {
                             this.$set(log, 'v_isReadMore', false);
+                            this.$set(log, 'v_isReadMoreNotes', false);
                         })
+                        this.isLogLoading = false
                     });
                     $('.get_log_data > a').click();
                 },
@@ -393,6 +426,10 @@ $(document).one('trigger::vue_init', function () {
                 setReadMoreForItem(activity) {
                     const idx = this.logs.findIndex(item => item.ID === activity.ID)
                     this.logs[idx].v_isReadMore = !this.logs[idx].v_isReadMore
+                },
+                setShowMoreNotes(activity) {
+                    const idx = this.logs.findIndex(item => item.ID === activity.ID)
+                    this.logs[idx].v_isReadMoreNotes = !this.logs[idx].v_isReadMoreNotes
                 },
                 setActiveLogFilter(filter) {
                     this.activeLogFilter = filter

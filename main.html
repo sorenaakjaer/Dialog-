@@ -17,7 +17,7 @@
                             :class="{'input-with-button--error': theCustomerPhoneNumberHasError}">
                             <input type="text" class="input-with-button__input" v-model="theCustomerPhoneNumber"
                                 ref="customer_number_input" placeholder="Indtast mobilnummer"
-                                @keyup="theCustomerPhoneNumberHasError = false" />
+                                @keyup="theCustomerPhoneNumberHasError = false" @keydown.enter="readCustomer" />
                             <button class="input-with-button__button c-bttn c-bttn--primary"
                                 :class="{'c-bttn--loading': isTheCustomerLoading}" @click="readCustomer">
                                 <template v-if="!isTheCustomerLoading">Søg efter kunde</template>
@@ -82,7 +82,8 @@
                 <div class="c-card c-card__dialog__new_log"
                     :class="{'c-card__dialog__new_log--active': isNewLogFormActive}">
                     <div class="c-card__header">
-                        <h4>Ny logning</h4>
+                        <h4 v-if="relatedLog">Tilføj relateret sag til {{ relatedLog }}</h4>
+                        <h4 v-else>Ny logning</h4>
                         <div class="bg-icon-hover" @click.stop="closeNewLogForm" v-if="isNewLogFormActive">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-6 h-6">
@@ -92,12 +93,10 @@
                     </div>
                     <div class="c-card__body pad-1">
                         <form @submit.prevent>
-                            <div v-if="relatedLog">
-                                Relateret sag {{ relatedLog }}
-                            </div>
                             <div class="c-input-group">
                                 <label class="c-label">Vælg kategori</label>
-                                <select v-model="selectedCat" @change="onSelectedCatChange">
+                                <select v-model="selectedCat" ref="new_log_category"
+                                    @change="onSelectedChange('category')">
                                     <option v-for="cat in filteredCategories">
                                         {{ cat }}
                                     </option>
@@ -106,7 +105,8 @@
                             <transition name="expand">
                                 <div v-if="filteredReasons.length > 0" class="c-input-group">
                                     <label class="c-label">Vælg Årsag</label>
-                                    <select v-model="selectedReason" @change="selectedResult = null">
+                                    <select v-model="selectedReason" ref="new_log_reason"
+                                        @change="onSelectedChange('reason')">
                                         <option v-for="reason in filteredReasons">
                                             {{ reason }}
                                         </option>
@@ -116,7 +116,8 @@
                             <transition name="expand">
                                 <div v-if="filteredResults.length > 0" class="c-input-group">
                                     <label class="c-label">Vælg Årsag</label>
-                                    <select v-model="selectedResult">
+                                    <select v-model="selectedResult" ref="new_log_result"
+                                        @change="onSelectedChange('result')">
                                         <option v-for="result in filteredResults">
                                             {{ result }}
                                         </option>
@@ -126,7 +127,8 @@
                             <transition name="expand">
                                 <div v-if="selectedResult" class="c-input-group">
                                     <label class="c-label">Evt. besked</label>
-                                    <textarea v-model="selectedMessage" rows="4" cols="50"></textarea>
+                                    <textarea v-model="selectedMessage" ref="new_log_message" rows="4"
+                                        cols="50"></textarea>
                                 </div>
                             </transition>
                             <transition name="expand">
@@ -213,11 +215,13 @@
                             </vue-virtual-scroller>
                         -->
                         <div class="c-logs">
-                            <ul class="c-logs__chain" v-for="logs in chainedLogs"
+                            <div class="c-loader" v-if="isLogLoading"></div>
+                            <ul class="c-logs__chain" v-else v-for="logs in chainedLogs"
                                 :class="{'c-logs-chain--chained': logs.length > 1}">
                                 <li v-for=" activity in logs" class="c-logs__log" :key="activity.ID">
                                     <div class="c-logs__log__meta">
-                                        <div>{{ activity.CREATED_TIME }}</div>{{ activity.CREATED_BY }}
+                                        <div>{{ activity.CREATED_TIME }}</div>{{ activity.CREATED_BY }} · {{ activity.ID
+                                        }}
                                     </div>
                                     <ul class="c-logs__log__content" v-if="activity.TYPE">
                                         <li class="c-logs__log__content__item" v-if="activity.STATUS">
@@ -247,7 +251,7 @@
                                         </li>
                                         <li class="c-logs__log__content__item c-logs__log__content__item__message"
                                             v-if="activity.MSG">
-                                            <label class="c-label">BESKED</label>
+                                            <label class="c-label c-label--top">BESKED</label>
                                             <div class="c-logs__log__content__item__message__message">
                                                 <p v-if="activity.v_isReadMore">{{ activity.MSG }}</p>
                                                 <p v-else>{{ activity.v_MsgShort }}</p>
@@ -257,6 +261,26 @@
                                                     <template v-else>Vis mere</template>
                                                 </a>
                                             </div>
+                                        </li>
+                                        <li class="c-logs__log__content__item" v-if="activity.v_notes.length > 0">
+                                            <label class="c-label c-label--top">Noter</label>
+                                            <ul class="c-logs__log__notes">
+                                                <li v-for="(cNote, key) in activity.v_notes"
+                                                    v-if="key < 2 || activity.v_isReadMoreNotes" :key="cNote.ID"
+                                                    class="c-logs__log__notes__note">
+                                                    <div class="c-logs__log__notes__note__header">
+                                                        <p>{{ cNote.CREATED_BY }}</p>
+                                                        <p>{{ cNote.TIME }}</p>
+                                                    </div>
+                                                    <div class="c-logs__log__notes__note__body">{{ cNote.MSG }}</div>
+                                                </li>
+                                                <a @click.stop.prevent="setShowMoreNotes(activity)"
+                                                    v-if="activity.v_notes.length > 2">
+                                                    <template v-if="activity.v_isReadMoreNotes">
+                                                        Vis færre noter</template>
+                                                    <template v-else>Vis flere noter</template>
+                                                </a>
+                                            </ul>
                                         </li>
                                         <li class="c-logs__log__content__item c-logs__log__content__item__actions">
                                             <label class="c-label">ACTIONS</label>

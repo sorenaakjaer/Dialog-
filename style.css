@@ -987,7 +987,7 @@ ul.c-logs-chain--chained>li.c-logs__log:nth-child(2) .c-logs__log__meta:before {
     align-items: center;
 }
 
-.c-logs__log__content .c-label .c-logs__log__content__item__message .c-label {
+.c-logs__log__content .c-label.c-label--top {
     align-items: flex-start;
 }
 
@@ -1079,6 +1079,11 @@ ul.c-logs__log__content>li.c-logs__log__content__item:not(:last-child) {
 
 .c-card__dialog {
     position: relative;
+}
+
+.c-card__dialog__new_log {
+    position: relative;
+    z-index: 1;
 }
 
 .c-card.c-card__dialog__new_log .c-card__header {
@@ -1662,4 +1667,33 @@ select {
 
 .SUBMIT_BTN_AREA>div {
     float: right
+}
+
+.c-page ul.c-logs__log__notes {
+    padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.c-logs__log__notes__note {
+    border: 1px solid var(--borderColor);
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    font-size: 12px;
+    min-width: 500px;
+    max-width: calc(100% - 1rem);
+}
+
+.c-logs__log__notes__note__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    font-weight: bold;
+    border-bottom: 1px solid var(--borderColor);
+}
+
+.c-logs__log__notes__note__body {
+    padding: 0.5rem;
+    font-style: italic;
 }
