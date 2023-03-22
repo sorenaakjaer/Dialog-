@@ -215,7 +215,6 @@
                             </vue-virtual-scroller>
                         -->
                         <div class="c-logs">
-                            <div class="c-loader" v-if="isLogLoading"></div>
                             <ul class="c-logs__chain" v-else v-for="logs in chainedLogs"
                                 :class="{'c-logs-chain--chained': logs.length > 1}">
                                 <li v-for=" activity in logs" class="c-logs__log" :key="activity.ID">
