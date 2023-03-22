@@ -364,7 +364,16 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_customer_data > a').click();
 
                     // Read customer log
-                    this.readCustomerLog()
+                    this.isLogLoading = true
+                    this.observeChanges('.output_log_data', (success) => {
+                        this.logs = success
+                        this.logs.forEach(log => {
+                            this.$set(log, 'v_isReadMore', false);
+                            this.$set(log, 'v_isReadMoreNotes', false);
+                        })
+                        this.isLogLoading = false
+                    });
+                    $('.get_log_data > a').click();
 
                     // Read customer new logging options
                     this.observeChanges('.output_log_options_data', (success) => {
