@@ -374,8 +374,7 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_log_options_data > a').click()
                 },
                 readCustomerLog() {
-                    $('.input_customer_id > input').val(this.theCustomerPhoneNumber)
-                    console.log('readCustomerLog', 'this.theCustomerPhoneNumber', this.theCustomerPhoneNumber)
+                    $('.input_customer_id > input').val(this.theCustomerId)
                     this.isLogLoading = true
                     this.observeChanges('.output_log_data', (success) => {
                         this.logs = success
@@ -385,7 +384,6 @@ $(document).one('trigger::vue_init', function () {
                         })
                         this.isLogLoading = false
                     });
-                    console.log('.input_customer_id > input', $('.input_customer_id > input').val(), this.theCustomerPhoneNumber)
                     $('.get_log_data > a').click();
                 },
                 readUser() {
