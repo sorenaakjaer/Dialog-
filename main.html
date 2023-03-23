@@ -59,7 +59,7 @@
                                 <li>{{ theCustomer.CUSTOMER_ADDRESS }}</li>
                                 <li>{{ theCustomer.CUSTOMER_ZIP }} {{ theCustomer.CUSTOMER_CITY }}</li>
                             </ul>
-                            <h4 class="text-explainer c-customer--not-found">Kunden er ikke fundet</h4>
+                            <h4 class="text-explainer c-customer--not-found" v-else>Kunden er ikke fundet</h4>
                             <ul>
                                 <li><label class="c-label">Mobilnummer</label>{{ theCustomer.vPhone }}</li>
                                 <li><label class="c-label">Email</label>
