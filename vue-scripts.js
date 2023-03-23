@@ -17,18 +17,22 @@ $(document).one('trigger::vue_init', function () {
             document.body.removeEventListener('click', el.clickOutsideEvent)
         },
     });
-
-    addVueVirtualScrollerFromCDN()
-    $(document).one("trigger::vue__virtual_scroller_loaded", function () {
+    addVueMultiSelect();
+    // addVueVirtualScrollerFromCDN()
+    $(document).one("trigger::vue__multi_select_loaded", function () {
+        Vue.component('vue-multiselect', window.VueMultiselect.default)
         var app = new Vue({
             el: '#c-app',
+            components: {
+                Multiselect: window.VueMultiselect.default
+            },
             data: {
                 user: null,
                 isUserLoading: false,
                 theCustomer: null,
                 theCustomerId: null,
                 isTheCustomerLoading: false,
-                theCustomerPhoneNumber: '22669000',
+                theCustomerPhoneNumber: '',
                 theCustomerPhoneNumberHasError: false,
                 logs: [],
                 isLogLoading: false,
@@ -64,7 +68,8 @@ $(document).one('trigger::vue_init', function () {
                 theMessageMessage: '',
                 theMessageFormErrors: {},
                 isSendingMessage: false,
-                theMessageEmailAddress: ''
+                theMessageEmailAddress: '',
+                theMessagePhoneNumber: ''
             },
             computed: {
                 theMessageTemplatesFiltered() {
@@ -209,9 +214,28 @@ $(document).one('trigger::vue_init', function () {
                         return dateB - dateA;
                     })
                     )
+                },
+                metaKey() {
+                    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+                    return isMac ? '⌘' : 'CTRL'
+                },
+                isNewLogSubmitOpen() {
+                    return this.selectedCat && this.selectedReason && this.selectedResult
                 }
             },
             methods: {
+                onNewLogTextareaKeyUp(event) {
+                    // Check if the 'cmd' or 'ctrl' key and the 'enter' key are pressed together
+                    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+                        this.submitNewLog()
+                    }
+                },
+                formatMessage(msg) {
+                    return msg
+                        .replace(/\\n/g, '<br>')
+                        .replace(/\\r\\r\\r/g, '<br>')
+                        .replace(/\\r/g, '<br>');
+                },
                 setActiveMessageType(messageType) {
                     this.activeMessageType = messageType
                     this.theMessageFormErrors = {}
@@ -239,6 +263,9 @@ $(document).one('trigger::vue_init', function () {
                         if (!this.theMessageMessage || !this.theMessageMessage.trim()) {
                             this.$set(this.theMessageFormErrors, 'message', 'Besked skal udfyldes');
                         }
+                        if (!this.theMessagePhoneNumber || this.theMessagePhoneNumber.trim().length !== 8) {
+                            this.$set(this.theMessageFormErrors, 'phone', 'Telefonnummer skal være 8 cifre');
+                        }
                     }
 
                     // check if there are any form errors
@@ -251,7 +278,7 @@ $(document).one('trigger::vue_init', function () {
                         TYPE: this.activeMessageType.toUpperCase(),
                         SUBJECT: this.activeMessageType === 'sms' ? null : this.theMessageSubject,
                         MSG: this.theMessageMessage,
-                        RECIEVER: this.activeMessageType === 'sms' ? this.theCustomerId : this.theCustomer.CUSTOMER_EMAIL
+                        RECIEVER: this.activeMessageType === 'sms' ? this.theMessagePhoneNumber : this.theMessageEmailAddress
                     }]
                     $('.input_set_log_data > input').val(JSON.stringify(theMessage))
                     this.observeChanges('.output_log_created', (jsonSucces) => {
@@ -275,6 +302,7 @@ $(document).one('trigger::vue_init', function () {
                 openIsMessageModal() {
                     this.isMessageModal = true
                     this.isModal = true
+                    this.theMessagePhoneNumber = this.theCustomerId ? this.theCustomerId : ''
                     this.theMessageEmailAddress = this.theCustomer.CUSTOMER_EMAIL ? this.theCustomer.CUSTOMER_EMAIL : ''
                 },
                 closeIsMessageModal() {
@@ -317,13 +345,14 @@ $(document).one('trigger::vue_init', function () {
                         this.openNewLogForm()
                         this.selectedReason = null
                         this.$nextTick(_ => {
-                            this.$refs.new_log_reason.focus()
+                            this.$refs.new_log_reason.activate()
                         })
                     }
                     if (val === 'reason') {
                         this.selectedResult = null
+                        console.log('this.$refs.new_log_result', this.$refs.new_log_result)
                         this.$nextTick(_ => {
-                            this.$refs.new_log_result.focus()
+                            this.$refs.new_log_result.activate();
                         })
                     }
                     if (val === 'result') {
@@ -397,7 +426,7 @@ $(document).one('trigger::vue_init', function () {
                     this.relatedLog = log.ID
                     this.isNewLogFormActive = true
                     this.$nextTick(_ => {
-                        this.$refs.new_log_category.focus()
+                        this.$refs.new_log_category.activate()
                     })
                 },
                 openNewLogForm() {
@@ -557,10 +586,9 @@ $(document).one('trigger::vue_init', function () {
             },
             mounted() {
                 $('.c-init-loader').removeClass('c-init-loader--show');
-                // this.readCustomer()
                 // Virtual scroller
-                Vue.component('vue-virtual-scroller', window["vue-virtual-scroller"].DynamicScroller);
-                Vue.component('DynamicScrollerItem', window["vue-virtual-scroller"].DynamicScrollerItem);
+                // Vue.component('vue-virtual-scroller', window["vue-virtual-scroller"].DynamicScroller);
+                // Vue.component('DynamicScrollerItem', window["vue-virtual-scroller"].DynamicScrollerItem);
                 $(document).on('trigger::etray_modal_close', () => {
                     this.closeEtrayModal()
                 })
@@ -769,6 +797,19 @@ function addEtrayCreateFormEventListeners() {
             });
         }
     });
+}
+
+function addVueMultiSelect() {
+    // Create a <link> element for the CSS file
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = 'https://cdn.jsdelivr.net/npm/vue-multiselect@latest/dist/vue-multiselect.min.css'
+    document.head.appendChild(link)
+
+    // Create a <script> element for the Vue Multiselect script
+    $.getScript("https://cdn.jsdelivr.net/npm/vue-multiselect@latest/dist/vue-multiselect.min.js", function (e, t, s) {
+        $(document).trigger("trigger::vue__multi_select_loaded")
+    })
 }
 
 function initVue() {

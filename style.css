@@ -764,6 +764,8 @@ html body {
     align-items: baseline;
     gap: 1rem;
     margin: 1rem;
+    max-height: calc(100vh - 75px - 2rem);
+    overflow: hidden;
 }
 
 .input-with-button {
@@ -884,10 +886,13 @@ select.Web_InnerControl {
 }
 
 .c-logs {
-    height: calc(100vh - (75px + 15px + 50px + 15px));
-    overflow-y: auto;
     padding: 1rem 2rem 1rem 1rem;
-    overscroll-behavior: contain;
+    overflow-y: auto;
+    height: calc(100vh - 75px - 1rem - 123px - 50px - 1rem);
+}
+
+.c-logs.c-logs--new-log-open {
+    height: calc(100vh - 75px - 1rem - 300px - 50px - 1rem);
 }
 
 .c-logs__log {
@@ -1024,6 +1029,7 @@ ul.c-logs__log__content>li.c-logs__log__content__item:not(:last-child) {
 
 .c-logs__log__content__item__message__message>p {
     display: inline;
+    white-space: pre-wrap;
 }
 
 .c-header .c-wrapper {
@@ -1078,13 +1084,21 @@ ul.c-logs__log__content>li.c-logs__log__content__item:not(:last-child) {
     flex: 1;
 }
 
+.c-grid__col__sidebar {
+    max-width: calc(400px + 1rem);
+}
+
+.c-buttons>button {
+    width: 100%;
+}
+
 .c-card__dialog {
     position: relative;
 }
 
 .c-card__dialog__new_log {
-    position: relative;
     z-index: 1;
+    border-bottom: 1px solid var(--borderColor);
 }
 
 .c-card.c-card__dialog__new_log .c-card__header {
@@ -1130,7 +1144,7 @@ svg:not(:root) {
 .c-input-group textarea,
 select,
 textarea,
-input[type="text"]:not(.input-with-button__input) {
+input[type="text"]:not(.input-with-button__input):not(.multiselect__input) {
     outline: 0 !important;
     border: 1px solid #edf2f7;
     padding: 0.5rem 1rem;
@@ -1247,6 +1261,7 @@ select {
 
 .c-init-loader.c-init-loader--show {
     opacity: 1;
+
 }
 
 .c-init-loader img {
@@ -1754,4 +1769,67 @@ select {
 
 .c-customer--not-found.text-explainer {
     margin: 0 0 0.5rem 0;
+}
+
+.c-select__row {
+    display: flex;
+    gap: 1rem;
+}
+
+.c-select__row>.c-input-group {
+    width: calc(100% / 3);
+    margin-bottom: 0;
+}
+
+.multiselect .multiselect__tags {
+    box-shadow: 0 2px 5px -1px rgb(50 50 93 / 25%), 0 1px 3px -1px rgb(0 0 0 / 30%);
+    box-sizing: border-box !important;
+    transition: background-color .24s, box-shadow .24s;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    padding: 5px 40px 0 10px;
+}
+
+.multiselect.multiselect--active .multiselect__tags {
+    border: 1px solid var(--darkYellow);
+    border-bottom: 1px solid var(--borderColor);
+}
+
+.multiselect .multiselect__content-wrapper {
+    border: 1px solid var(--darkYellow);
+    border-width: 0 1px 1px 1px;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.multiselect,
+.multiselect .multiselect__input,
+.multiselect .multiselect__single {
+    font-size: 14px !important;
+    padding: 0 !important;
+}
+
+.multiselect .multiselect__single {
+    font-weight: bold;
+}
+
+.multiselect__content .multiselect__option--highlight {
+    background: var(--borderColor);
+    outline: none;
+    color: #222;
+}
+
+.multiselect .multiselect__option--selected {
+    background: var(--darkYellow);
+}
+
+.multiselect .multiselect__option--selected.multiselect__option--highlight {
+    background: var(--red);
+}
+
+.c-multiselect-no_result {
+    font-style: italic;
+    color: #838383;
+    cursor: default;
 }
