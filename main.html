@@ -249,13 +249,13 @@
                                         <li class="c-logs__log__content__item"><label class="c-label">Type</label>
                                             <p>{{ activity.TYPE }}</p>
                                         </li>
-                                        <li class="c-logs__log__content__item" v-if="activity.REASON">
-                                            <label class="c-label">ÅRSAG</label>
-                                            <p>{{ activity.REASON }}</p>
-                                        </li>
                                         <li class="c-logs__log__content__item" v-if="activity.CAT">
                                             <label class="c-label">KATEGORI</label>
                                             <p>{{ activity.CAT }}</p>
+                                        </li>
+                                        <li class="c-logs__log__content__item" v-if="activity.REASON">
+                                            <label class="c-label">ÅRSAG</label>
+                                            <p>{{ activity.REASON }}</p>
                                         </li>
                                         <li class="c-logs__log__content__item" v-if="activity.RESULT">
                                             <label class="c-label">UDFALD</label>
