@@ -78,11 +78,20 @@
                     <div class="c-card__body pad-1">
                         <div class="c-buttons">
                             <button class="c-bttn c-bttn--blue" @click="openCreateCaseFor2ndLine">
-                                Opret sag til 2ndline
+                                Opret sag til BackOffice
                             </button>
                             <button class="c-bttn c-bttn--blue" @click="openIsMessageModal">
-                                Send besked til kunden
+                                Send mail til kunde
                             </button>
+                            <button class="c-bttn c-bttn--blue" @click="openWebVictor">
+                                Åben kunde i Web Victor
+                            </button> 
+                            <button class="c-bttn c-bttn--blue" @click="openActiveOffers">
+                                Se åbne tilbud op kunden
+                            </button> 
+                            <button class="c-bttn c-bttn--blue" @click="openClosedOffers">
+                                Se åbne tilbud op kunden
+                            </button> 
                         </div>
                     </div>
                 </div>
@@ -106,10 +115,10 @@
                                 <div class="c-select__row">
                                     <div class="c-input-group">
                                         <multiselect :multiple="false" :show-labels="false"
-                                            placeholder="Søg og vælg kategori" v-model="selectedCat"
+                                            placeholder="Søg og vælg formål" v-model="selectedCat"
                                             ref="new_log_category" :options="filteredCategories"
                                             @select="onSelectedChange('category')">
-                                            <span slot="noResult" class="c-multiselect-no_result">Ingen kategorier
+                                            <span slot="noResult" class="c-multiselect-no_result">Ingen formål
                                                 matcher
                                                 din
                                                 søgning</span>
@@ -144,7 +153,7 @@
                                 </div>
                                 <transition name="expand">
                                     <div v-if="selectedResult" class="c-input-group">
-                                        <label class="c-label">Evt. besked</label>
+                                        <label class="c-label">Uddyb henvendelse og beskriv hvad du har aftalt med kunden</label>
                                         <textarea v-model="selectedMessage" ref="new_log_message" rows="4"
                                             @keydown="onNewLogTextareaKeyUp($event)" cols="50"></textarea>
                                     </div>
@@ -250,7 +259,7 @@
                                             <p>{{ activity.TYPE }}</p>
                                         </li>
                                         <li class="c-logs__log__content__item" v-if="activity.CAT">
-                                            <label class="c-label">KATEGORI</label>
+                                            <label class="c-label">FORMÅL</label>
                                             <p>{{ activity.CAT }}</p>
                                         </li>
                                         <li class="c-logs__log__content__item" v-if="activity.REASON">
@@ -328,7 +337,7 @@
         <template v-if="isMessageModal">
             <div class="c-modal__content">
                 <div class="c-modal__content__header">
-                    <h4>Send SMS eller email</h4>
+                    <h4>Send email</h4>
                     <div class="bg-icon-hover" @click.stop="closeModal">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6">
@@ -343,11 +352,11 @@
                             @click="setActiveMessageType('email')">
                             Email
                         </div>
-                        <div class="c-button c-filters__filter"
+                        <!--<div class="c-button c-filters__filter"
                             :class="{'c-filters__filter--active': activeMessageType === 'sms'}"
                             @click="setActiveMessageType('sms')">
                             SMS
-                        </div>
+                        </div>-->
                     </div>
                     <form class="c-send-message__form" @submit.prevent>
                         <div class="c-input-group">
@@ -458,7 +467,7 @@
 <div class="c-modal c-modal--etray js-c-modal c-modal--hidden">
     <div class="c-modal__content">
         <div class="c-modal__content__header">
-            <h4>Opret sag til 2ndline</h4>
+            <h4>Opret sag til BackOffice</h4>
             <div class="bg-icon-hover js-close-c-modal" onclick="closeCreateCase(event)">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">
