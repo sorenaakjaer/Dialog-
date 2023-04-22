@@ -179,18 +179,35 @@
                     <div class="c-card__header">
                         <h4>Dialog tråd</h4>
                         <!--SEARCH -->
-                        <div class="c-card__header__right">
-                            <div class="c-filters" :class="[
-                                {'c-filters--active': isLogFiltersActive},
-                                {'c-filters--selected': activeLogFilter.value}
+                        <div class="c-card__header__right c-card__header__right__filters">
+                            <div class="c-filters" v-for="filterType in logFilters" :class="[
+                                {'c-filters--active': filterType.isLogFiltersActive},
+                                {'c-filters--selected': filterType.activeLogFilter}
                                 ]" v-click-outside="closeVueDropdown">
-                                <div class="c-filter__active-filter" @click="isLogFiltersActive = !isLogFiltersActive">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
-                                    </svg>
-                                    {{ activeLogFilter.title }}
+                                <div class="c-filter__active-filter"
+                                    @click="setTheActiveLogFilterDropdown(filterType.label)">
+                                    <div class="c-filter__active-filter__label"
+                                        @click.stop="onFilterLabelClick(filterType)">
+                                        <svg v-if="filterType.activeLogFilter" xmlns="http://www.w3.org/2000/svg"
+                                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                            class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+                                        </svg>
+                                        <span>{{ filterType.title }}</span>
+                                    </div>
+                                    <date-picker v-if="filterType.activeLogFilter === 'customDate'"
+                                        v-model="activeFilterDateRange" type="date" range format="DD-MM-YYYY"
+                                        :clearable="false" :open.sync="isShowDateRangePanel" @close="onDateRangeClose"
+                                        placeholder="Vælg et datointerval"></date-picker>
+                                    <template v-else>
+                                        {{filterType.activeTitle }}
+                                    </template>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -198,9 +215,9 @@
                                     </svg>
                                 </div>
                                 <transition name="dropdown">
-                                    <ul class="c-filters__dropdown" v-if="isLogFiltersActive">
-                                        <li v-for="filter in logFilters" :key="filter.value"
-                                            @click="setActiveLogFilter(filter)">{{
+                                    <ul class="c-filters__dropdown" v-if="filterType.isLogFiltersActive">
+                                        <li v-for="filter in filterType.options" :key="filter.value"
+                                            @click="setActiveLogFilter(filterType, filter)">{{
                                             filter.title}}
                                         </li>
                                     </ul>

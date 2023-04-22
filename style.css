@@ -827,8 +827,9 @@ html body {
 }
 
 .c-card__header h4 {
-    margin: 0;
+    margin: 0 1rem 0 0;
     line-height: 1;
+    min-width: fit-content;
 }
 
 .pad-1 {
@@ -1144,7 +1145,7 @@ svg:not(:root) {
 .c-input-group textarea,
 select,
 textarea,
-input[type="text"]:not(.input-with-button__input):not(.multiselect__input) {
+input[type="text"]:not(.input-with-button__input):not(.multiselect__input):not(.mx-input) {
     outline: 0 !important;
     border: 1px solid #edf2f7;
     padding: 0.5rem 1rem;
@@ -1306,7 +1307,7 @@ select {
     outline-color: #d6d6d6;
     border: none;
     border-radius: 4px;
-    width: calc(37px + 140px);
+    width: calc(37px + 45px);
     transition: width 0.25s;
 }
 
@@ -1364,7 +1365,7 @@ select {
 
 .c-filters {
     position: relative;
-    font-size: 15px;
+    font-size: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1373,12 +1374,14 @@ select {
 .c-filter__active-filter {
     display: flex;
     align-items: center;
-    border: 1px solid #d6d6d6;
+    border: 1px dashed #d6d6d6;
     border-radius: 4px;
     height: 33px;
 }
 
-.c-filters--active .c-filter__active-filter {
+.c-filters--active .c-filter__active-filter,
+.c-filters--selected .c-filter__active-filter {
+    border-style: solid;
     background: whitesmoke;
 }
 
@@ -1386,29 +1389,55 @@ select {
     font-weight: bold;
 }
 
-.c-filter__active-filter>svg:first-child {
+.c-filter__active-filter__label {
+    display: flex;
     background: var(--bgColor);
-    width: 27px;
-    border-radius: 4px;
-    height: calc(100% - 6px);
-    padding: 3px;
-    margin: 0px;
+    align-items: center;
+    padding-right: 4px;
     margin-right: 0.5rem;
+    border-radius: 4px;
+    height: calc(100% - 4px);
     margin-left: 2px;
+    font-weight: normal !important;
+    font-size: 10px;
+    line-height: 10px;
 }
 
-.c-filters--active .c-filter__active-filter>svg:first-child,
-.c-filters--selected .c-filter__active-filter>svg:first-child {
+
+.c-filters--active .c-filter__active-filter .c-filter__active-filter__label,
+.c-filters--selected .c-filter__active-filter .c-filter__active-filter__label {
     background-color: #000;
+    color: #fff;
+}
+
+.c-filters--selected .c-filter__active-filter .c-filter__active-filter__label:hover {
+    background: var(--red);
+}
+
+
+.c-filter__active-filter__label svg {
+    height: 0.8rem;
+}
+
+.c-filters--active .c-filter__active-filter .c-filter__active-filter__label>svg:first-child,
+.c-filters--selected .c-filter__active-filter .c-filter__active-filter__label>svg:first-child {
     fill: #fff;
 }
 
 .c-filter__active-filter>svg:last-child {
+    margin: 0 0.5rem 0 0;
+    height: 0.8rem;
+    width: 0.8rem;
+}
+
+.c-filters--selected .c-filter__active-filter>svg:last-child {
     margin: 0 0.5rem;
 }
 
+
 .c-filters__dropdown {
     position: absolute;
+    width: max-content;
     top: 100%;
     right: 0;
     z-index: 123123;
@@ -1416,6 +1445,8 @@ select {
     border: 1px solid #d6d6d6;
     border-radius: 4px;
     background: #fff;
+    max-height: 80vh;
+    overflow-y: auto;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
@@ -1466,8 +1497,9 @@ select {
     align-items: center;
 }
 
-.c-card__header__right>* {
-    margin-left: 1rem;
+.c-card__header__right.c-card__header__right__filters {
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .c-modal {
@@ -1832,4 +1864,16 @@ select {
     font-style: italic;
     color: #838383;
     cursor: default;
+}
+
+
+.mx-datepicker.mx-datepicker-range {
+    width: 230px;
+}
+
+.mx-input-wrapper .mx-input {
+    border: none;
+    height: 25px;
+    background: none;
+    box-shadow: none;
 }

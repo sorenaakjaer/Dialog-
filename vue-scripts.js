@@ -17,14 +17,19 @@ $(document).one('trigger::vue_init', function () {
             document.body.removeEventListener('click', el.clickOutsideEvent)
         },
     });
-    addVueMultiSelect();
+    addVueDatePicker();
+    $(document).one("trigger::vue__datepicker_loaded", function () {
+        addVueMultiSelect();
+    })
     // addVueVirtualScrollerFromCDN()
     $(document).one("trigger::vue__multi_select_loaded", function () {
         Vue.component('vue-multiselect', window.VueMultiselect.default)
+        Vue.component('vue-datePicker', window.DatePicker)
         var app = new Vue({
             el: '#c-app',
             components: {
-                Multiselect: window.VueMultiselect.default
+                Multiselect: window.VueMultiselect.default,
+                datePicker: window.DatePicker
             },
             data: {
                 user: null,
@@ -48,13 +53,8 @@ $(document).one('trigger::vue_init', function () {
                 searchQuery: '',
                 debounce: null,
                 isSearchActive: false,
-                isLogFiltersActive: false,
-                activeLogFilter: { value: null, title: 'Alle' },
-                logFilters: [
-                    { value: null, title: 'Alle' },
-                    { value: 'Open', title: 'Åbne' },
-                    { value: 'Closed', title: 'Lukkede' }
-                ],
+                theActiveLogFilterDropdown: null,
+                activeLogFilters: {},
                 isModal: false,
                 theActiveLog: null,
                 theActiveLogAction: null,
@@ -69,7 +69,9 @@ $(document).one('trigger::vue_init', function () {
                 theMessageFormErrors: {},
                 isSendingMessage: false,
                 theMessageEmailAddress: '',
-                theMessagePhoneNumber: ''
+                theMessagePhoneNumber: '',
+                activeFilterDateRange: [],
+                isShowDateRangePanel: false
             },
             computed: {
                 theMessageTemplatesFiltered() {
@@ -159,15 +161,140 @@ $(document).one('trigger::vue_init', function () {
                         return map;
                     }, {});
                 },
+                logFilters() {
+                    const self = this
+                    function getActiveFilter(filterLabel) {
+                        return self.activeLogFilters[filterLabel] ? self.activeLogFilters[filterLabel] : null
+                    }
+                    function getAllOptionsFromALabel(filterLabel) {
+                        const optionCounts = {};
+                        self.logsSorted.forEach(log => {
+                            const option = log[filterLabel];
+                            optionCounts[option] = (optionCounts[option] || 0) + 1;
+                        });
+
+                        const optionsList = Object.entries(optionCounts).sort().map(([option, count]) => {
+                            return { value: option, title: `${option} (${count})` };
+                        });
+
+                        return [...optionsList];
+                    }
+                    const closedLogs = this.logsSorted.filter(item => item.STATUS === 'Closed')
+                    const openLogs = this.logsSorted.filter(item => item.STATUS === 'Open')
+
+                    function getDateFromNow(days) {
+                        let currentDate = new Date();
+                        let targetDate = new Date(currentDate.getTime() - days * 24 * 60 * 60 * 1000);
+                        let formattedDate = targetDate.toISOString().substr(0, 10);
+                        return formattedDate
+                    }
+
+                    function getDateFromNowMonths(months) {
+                        let currentDate = new Date();
+                        let targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - months, currentDate.getDate());
+                        let formattedDate = targetDate.toISOString().substr(0, 10);
+                        return formattedDate
+                    }
+
+                    function getDateFromNowYears(years) {
+                        let currentDate = new Date();
+                        let targetDate = new Date(currentDate.getFullYear() - years, currentDate.getMonth(), currentDate.getDate());
+                        let formattedDate = targetDate.toISOString().substr(0, 10);
+                        return formattedDate
+                    }
+
+                    const filterArr = [
+                        {
+                            label: 'PERIODE',
+                            title: 'PERIODE',
+                            activeLogFilter: getActiveFilter('PERIODE'),
+                            isLogFiltersActive: this.theActiveLogFilterDropdown === 'PERIODE',
+                            options: [
+                                { value: getDateFromNow(7), title: 'Seneste 7 dage' },
+                                { value: getDateFromNow(15), title: 'Seneste 15 dage' },
+                                { value: getDateFromNow(30), title: 'Seneste 30 dage' },
+                                { value: getDateFromNowMonths(3), title: 'Seneste 3 måneder' },
+                                { value: getDateFromNowMonths(6), title: 'Seneste 6 måneder' },
+                                { value: getDateFromNowYears(1), title: 'Seneste år' },
+                                { value: 'customDate', title: 'Vælg et datointerval' }
+                            ]
+                        },
+                        {
+                            label: 'STATUS',
+                            title: 'STATUS',
+                            activeLogFilter: getActiveFilter('STATUS'),
+                            isLogFiltersActive: this.theActiveLogFilterDropdown === 'STATUS',
+                            options: [
+                                { value: 'Open', title: 'Åbne  (' + openLogs.length + ')' },
+                                { value: 'Closed', title: 'Lukkede (' + closedLogs.length + ')' }
+                            ]
+                        },
+                        {
+                            label: 'TYPE',
+                            title: 'TYPE',
+                            activeLogFilter: getActiveFilter('TYPE'),
+                            isLogFiltersActive: this.theActiveLogFilterDropdown === 'TYPE',
+                            options: getAllOptionsFromALabel('TYPE')
+                        },
+                        {
+                            label: 'CAT',
+                            title: 'FORMÅL',
+                            activeLogFilter: getActiveFilter('CAT'),
+                            isLogFiltersActive: this.theActiveLogFilterDropdown === 'CAT',
+                            options: getAllOptionsFromALabel('CAT')
+                        }
+                    ]
+                    filterArr.forEach(filter => {
+                        let title = ''
+                        const filterLabel = filter.label
+                        const val = this.activeLogFilters[filterLabel]
+                        if (val) {
+                            const filterOption = filter['options'].find(option => option.value === val)
+                            title = filterOption.title
+                        }
+                        filter['activeTitle'] = title
+                    })
+                    return filterArr
+                },
                 logsFiltered() {
-                    let logs = this.logsSorted
-                    if (this.activeLogFilter.value) {
-                        logs = this.logsSorted.filter(item => item.STATUS === this.activeLogFilter.value)
+                    function isDateInRange(dateToCheckStr, startDateStr, endDateStr) {
+                        let dateToCheck = new Date(dateToCheckStr);
+                        let startDate = new Date(startDateStr);
+                        let endDateEndOfDay = new Date(endDateStr).setHours(23, 59, 59, 999);
+                        let endDate = new Date(endDateEndOfDay)
+                        return dateToCheck.getTime() >= startDate.getTime() && dateToCheck.getTime() <= endDate.getTime();
+                    }
+                    let logs = this.logsSorted;
+                    if (this.activeLogFilters && Object.keys(this.activeLogFilters).length > 0) {
+                        logs = logs.filter(item => {
+                            return Object.entries(this.activeLogFilters).every(([key, value]) => {
+                                if (key === 'PERIODE') {
+                                    let createdDate = this.formatDate(item['CREATED_TIME'])
+                                    if (value === 'customDate') {
+                                        if (!this.activeFilterDateRange[0]) {
+                                            return true
+                                        }
+                                        let startDate = new Date(this.activeFilterDateRange[0])
+                                        let endDate = new Date(this.activeFilterDateRange[1])
+                                        let startDateDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                                        let endDateDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+                                        // Check if the item was created between the start and end dates
+                                        return isDateInRange(createdDate, startDateDateOnly, endDateDateOnly)
+                                    } else {
+                                        let filterDate = new Date(value);
+                                        let createdDateOnly = new Date(createdDate.getFullYear(), createdDate.getMonth(), createdDate.getDate());
+                                        let filterDateOnly = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate());
+                                        // Check if the item was created before the after the date
+                                        return createdDateOnly.getTime() >= filterDateOnly.getTime()
+                                    }
+                                } else {
+                                    return !value || item[key] === value;
+                                }
+                            });
+                        });
                     }
                     return logs.filter(item => {
-                        return Object.values(item).some(value =>
-                            String(value).toLowerCase().includes(this.searchQuery.toLowerCase())
-                        );
+                        return Object.values(item).some(value => String(value).toLowerCase().includes(this.searchQuery.toLowerCase()));
                     });
                 },
                 chainedLogIds() {
@@ -224,6 +351,14 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                onFilterLabelClick(filterType) {
+                    if (this.activeLogFilters[filterType.label]) {
+                        this.$delete(this.activeLogFilters, filterType.label)
+                        this.theActiveLogFilterDropdown = null
+                    } else {
+                        this.setTheActiveLogFilterDropdown(filterType.label)
+                    }
+                },
                 openWebVictor() {
                     const guid = this.theCustomer && this.theCustomer['GUID'] ? this.theCustomer['GUID'] : null
                     if (!guid) {
@@ -440,10 +575,11 @@ $(document).one('trigger::vue_init', function () {
                     this.relatedLog = log.ID
                     this.isNewLogFormActive = true
                     const oldCat = log['CAT']
-                    this.selectedCat = oldCat
-                    if (oldCat) {
+                    if (oldCat && this.filteredCategories.indexOf(oldCat) > -1) {
+                        this.selectedCat = oldCat
                         this.onSelectedChange('category')
                     } else {
+                        this.selectedCat = null
                         this.$nextTick(_ => {
                             this.$refs.new_log_category.activate()
                         })
@@ -579,13 +715,30 @@ $(document).one('trigger::vue_init', function () {
                     const idx = this.logs.findIndex(item => item.ID === activity.ID)
                     this.logs[idx].v_isReadMoreNotes = !this.logs[idx].v_isReadMoreNotes
                 },
-                setActiveLogFilter(filter) {
-                    this.activeLogFilter = filter
-                    this.isLogFiltersActive = false
+                setTheActiveLogFilterDropdown(label) {
+                    setTimeout(_ => {
+                        if (label === 'PERIODE' && this.isShowDateRangePanel) {
+                            return
+                        }
+                        if (this.theActiveLogFilterDropdown === label) {
+                            this.theActiveLogFilterDropdown = null
+                        } else {
+                            this.theActiveLogFilterDropdown = label
+                        }
+                    }, 0)
+                },
+                setActiveLogFilter(filterType, activefilter) {
+                    this.$set(this.activeLogFilters, filterType.label, activefilter.value)
+                    if (activefilter.value === 'customDate') {
+                        this.$nextTick(_ => {
+                            this.isShowDateRangePanel = true
+                        })
+                    }
+                    this.theActiveLogFilterDropdown = null
                 },
                 closeVueDropdown() {
-                    if (this.isLogFiltersActive) {
-                        this.isLogFiltersActive = false
+                    if (this.theActiveLogFilterDropdown) {
+                        this.theActiveLogFilterDropdown = null
                     }
                 },
                 openCreateCaseFor2ndLine() {
@@ -828,6 +981,26 @@ function addVueMultiSelect() {
     // Create a <script> element for the Vue Multiselect script
     $.getScript("https://cdn.jsdelivr.net/npm/vue-multiselect@latest/dist/vue-multiselect.min.js", function (e, t, s) {
         $(document).trigger("trigger::vue__multi_select_loaded")
+    })
+}
+
+function addVueDatePicker() {
+    // Create a <link> element for the CSS file
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = 'https://unpkg.com/vue2-datepicker/index.css'
+    document.head.appendChild(link)
+
+    // Create a <script> element for the Vue Multiselect script
+    $.getScript("https://unpkg.com/vue2-datepicker@3.11.1/index.min.js", function (e, t, s) {
+        $(document).trigger("trigger::vue__datepicker_init")
+    })
+
+    $(document).one('trigger::vue__datepicker_init', function () {
+        // Create a <script> element for the Vue Multiselect script
+        $.getScript("https://unpkg.com/vue2-datepicker@3.11.1/locale/da.js", function (e, t, s) {
+            $(document).trigger("trigger::vue__datepicker_loaded")
+        })
     })
 }
 
