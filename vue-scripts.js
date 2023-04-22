@@ -224,6 +224,23 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                openWebVictor() {
+                    const guid = this.theCustomer && this.theCustomer['GUID'] ? this.theCustomer['GUID'] : null
+                    if (!guid) {
+                        window.alert('Ingen GUID på kunden')
+                        return
+                    }
+                    const url = 'http://cbb.apps.mvno.dk/customers/' + guid
+                    window.open(url, '_blank')
+                },
+                openActiveOffers() {
+                    const url = 'https://www.cbb.dk/EPiServer/CBB/OrderSearch?Query=' + this.theCustomerId
+                    window.open(url, '_blank')
+                },
+                openClosedOffers() {
+                    const url = 'https://www.cbb.dk/EPiServer/CBB/OrderSearch?Query=' + this.theCustomerId + '&SearchType=1'
+                    window.open(url, '_blank')
+                },
                 onNewLogTextareaKeyUp(event) {
                     // Check if the 'cmd' or 'ctrl' key and the 'enter' key are pressed together
                     if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {

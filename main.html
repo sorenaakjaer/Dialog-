@@ -85,13 +85,13 @@
                             </button>
                             <button class="c-bttn c-bttn--blue" @click="openWebVictor">
                                 Åben kunde i Web Victor
-                            </button> 
+                            </button>
                             <button class="c-bttn c-bttn--blue" @click="openActiveOffers">
                                 Se åbne tilbud op kunden
-                            </button> 
+                            </button>
                             <button class="c-bttn c-bttn--blue" @click="openClosedOffers">
                                 Se åbne tilbud op kunden
-                            </button> 
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -153,7 +153,8 @@
                                 </div>
                                 <transition name="expand">
                                     <div v-if="selectedResult" class="c-input-group">
-                                        <label class="c-label">Uddyb henvendelse og beskriv hvad du har aftalt med kunden</label>
+                                        <label class="c-label">Uddyb henvendelse og beskriv hvad du har aftalt med
+                                            kunden</label>
                                         <textarea v-model="selectedMessage" ref="new_log_message" rows="4"
                                             @keydown="onNewLogTextareaKeyUp($event)" cols="50"></textarea>
                                     </div>
