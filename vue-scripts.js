@@ -334,7 +334,6 @@ $(document).one('trigger::vue_init', function () {
                     let temporaryElement = document.createElement("div");
                     temporaryElement.innerHTML = encodedString;
                     let decodedString = temporaryElement.textContent;
-                    console.log(decodedString);
                     return decodedString
                 },
                 clearSearchQuery() {
@@ -367,7 +366,6 @@ $(document).one('trigger::vue_init', function () {
                     }
                     if (val === 'reason') {
                         this.selectedResult = null
-                        console.log('this.$refs.new_log_result', this.$refs.new_log_result)
                         this.$nextTick(_ => {
                             this.$refs.new_log_result.activate();
                         })
@@ -417,7 +415,6 @@ $(document).one('trigger::vue_init', function () {
                         ACTION: this.theActiveLogAction,
                         MSG: newNote
                     }
-                    console.log({ saveItem })
                     $('.input_set_log_data > input').val(JSON.stringify(saveItem))
                     this.observeChanges('.output_log_created', (jsonSucces) => {
                         this.pushToLogs(jsonSucces)
@@ -442,9 +439,15 @@ $(document).one('trigger::vue_init', function () {
                     $('html, body').animate({ scrollTop: 0 }, 'slow');
                     this.relatedLog = log.ID
                     this.isNewLogFormActive = true
-                    this.$nextTick(_ => {
-                        this.$refs.new_log_category.activate()
-                    })
+                    const oldCat = log['CAT']
+                    this.selectedCat = oldCat
+                    if (oldCat) {
+                        this.onSelectedChange('category')
+                    } else {
+                        this.$nextTick(_ => {
+                            this.$refs.new_log_category.activate()
+                        })
+                    }
                 },
                 openNewLogForm() {
                     this.isNewLogFormActive = true
@@ -552,7 +555,6 @@ $(document).one('trigger::vue_init', function () {
                     let cInterval = setInterval(_ => {
                         const jsonString = el.html()
                         if (jsonString !== 'loading') {
-                            console.log('observe', { selector, jsonString })
                             clearInterval(cInterval)
                             const sanitizedJsonString = removeControlCharacters(jsonString);
                             const decoded = this.cDecode(sanitizedJsonString);
