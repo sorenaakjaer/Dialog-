@@ -203,7 +203,7 @@
                                     </div>
                                     <date-picker v-if="filterType.activeLogFilter === 'customDate'"
                                         v-model="activeFilterDateRange" type="date" range format="DD-MM-YYYY"
-                                        :clearable="false" :open.sync="isShowDateRangePanel" @close="onDateRangeClose"
+                                        :clearable="false" :open.sync="isShowDateRangePanel"
                                         placeholder="Vælg et datointerval"></date-picker>
                                     <template v-else>
                                         {{filterType.activeTitle }}
