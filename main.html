@@ -124,32 +124,28 @@
                                                 søgning</span>
                                         </multiselect>
                                     </div>
-                                    <transition name="expand">
-                                        <div v-if="filteredReasons.length > 0" class="c-input-group">
-                                            <multiselect :multiple="false" :show-labels="false"
-                                                placeholder="Søg og vælg årsag" v-model="selectedReason"
-                                                ref="new_log_reason" :options="filteredReasons"
-                                                @select="onSelectedChange('reason')">
-                                                <span slot="noResult" class="c-multiselect-no_result">Ingen årsager
-                                                    matcher
-                                                    din
-                                                    søgning</span>
-                                            </multiselect>
-                                        </div>
-                                    </transition>
-                                    <transition name="expand">
-                                        <div v-if="filteredResults.length > 0" class="c-input-group">
-                                            <multiselect :multiple="false" :show-labels="false"
-                                                placeholder="Søg og vælg result" v-model="selectedResult"
-                                                ref="new_log_result" :options="filteredResults"
-                                                @select="onSelectedChange('result')">
-                                                <span slot="noResult" class="c-multiselect-no_result">Ingen resultater
-                                                    matcher
-                                                    din
-                                                    søgning</span>
-                                            </multiselect>
-                                        </div>
-                                    </transition>
+                                    <div v-if="filteredReasons.length > 0" class="c-input-group">
+                                        <multiselect :multiple="false" :show-labels="false"
+                                            placeholder="Søg og vælg årsag" v-model="selectedReason"
+                                            ref="new_log_reason" :options="filteredReasons"
+                                            @select="onSelectedChange('reason')">
+                                            <span slot="noResult" class="c-multiselect-no_result">Ingen årsager
+                                                matcher
+                                                din
+                                                søgning</span>
+                                        </multiselect>
+                                    </div>
+                                    <div v-if="filteredResults.length > 0" class="c-input-group">
+                                        <multiselect :multiple="false" :show-labels="false"
+                                            placeholder="Søg og vælg result" v-model="selectedResult"
+                                            ref="new_log_result" :options="filteredResults"
+                                            @select="onSelectedChange('result')">
+                                            <span slot="noResult" class="c-multiselect-no_result">Ingen resultater
+                                                matcher
+                                                din
+                                                søgning</span>
+                                        </multiselect>
+                                    </div>
                                 </div>
                                 <transition name="expand">
                                     <div v-if="selectedResult" class="c-input-group">
@@ -160,16 +156,39 @@
                                     </div>
                                 </transition>
                                 <transition name="expand">
-                                    <div class="c-input-group__submit"
+                                    <div class="c-input-group__buttons"
                                         v-if="selectedCat && selectedReason && selectedResult">
-                                        <button class="c-bttn c-bttn--blue" @click="closeNewLogForm"
-                                            @keydown="onNewLogTextareaKeyUp($event)">Annullér</button>
-                                        <div class="hint--bottom" :aria-label="metaKey + ' + Enter'">
-                                            <button class="c-bttn c-bttn--primary"
-                                                @keydown="onNewLogTextareaKeyUp($event)"
-                                                :class="{'c-bttn--loading': isSubmittingNewLog}"
-                                                @click="submitNewLog"><template
-                                                    v-if="!isSubmittingNewLog">Gem</template></button>
+                                        <div class="c-input-group__buttons__left"
+                                            :class="{'shake': isRemeberValidationTypeAnimate}">
+                                            <label class="c-label">
+                                                Vælg valideringstype
+                                            </label>
+                                            <div class="c-input-group__radio-group">
+                                                <button v-for="valideringstype in validationButtonArr"
+                                                    @keydown="onNewLogTextareaKeyUp($event)"
+                                                    class="c-bttn--secondary c-bttn__radio"
+                                                    :aria-label="valideringstype.tooltip"
+                                                    :class="[
+                                                    {'hint--bottom': valideringstype.tooltip.length > 0},
+                                                    {'c-bttn__radio--checked': seletedValidation === valideringstype.val}]"
+                                                    @click="setSeletedValidation(valideringstype.val)">{{
+                                                    valideringstype.val }}
+                                                    <div class="c-bttn__radio__circle"></div>
+                                                </button>
+                                            </div>
+                                            <p class="text--error" v-if="isRemeberValidationType">Der skal vælges en
+                                                valideringstype</p>
+                                        </div>
+                                        <div class="c-input-group__submit">
+                                            <button class="c-bttn c-bttn--blue" @click="closeNewLogForm"
+                                                @keydown="onNewLogTextareaKeyUp($event)">Annullér</button>
+                                            <div class="hint--bottom" :aria-label="metaKey + ' + Enter'">
+                                                <button class="c-bttn c-bttn--primary"
+                                                    @keydown="onNewLogTextareaKeyUp($event)"
+                                                    :class="{'c-bttn--loading': isSubmittingNewLog}"
+                                                    @click="submitNewLog"><template
+                                                        v-if="!isSubmittingNewLog">Gem</template></button>
+                                            </div>
                                         </div>
                                     </div>
                                 </transition>
@@ -234,7 +253,7 @@
                                     </svg>
                                 </div>
                                 <input type="search" ref="v_search_query" @input="debounceSearch" class="c-search-cases"
-                                    placeholder="Søg..">
+                                    placeholder="Søg">
                                 <div class="c-search-group__clear" @click="clearSearchQuery">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -488,6 +507,11 @@
                 </div>
             </div>
         </template>
+    </div>
+</transition>
+<transition name="slide-up">
+    <div v-if="isToastVisible" class="toast">
+        {{ toastMessage }}
     </div>
 </transition>
 <transition name="opacity">

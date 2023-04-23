@@ -72,7 +72,19 @@ $(document).one('trigger::vue_init', function () {
                 theMessagePhoneNumber: '',
                 activeFilterDateRange: [],
                 isShowDateRangePanel: false,
-                showRelatedLogs: {}
+                showRelatedLogs: {},
+                validationButtonArr: [
+                    { val: 'JE', tooltip: '' },
+                    { val: '3.pkt', tooltip: '' },
+                    { val: '3 part', tooltip: '' },
+                    { val: 'Ingen val', tooltip: '' }
+                ],
+                seletedValidation: '',
+                isRemeberValidationTypeAnimate: false,
+                isRemeberValidationType: false,
+                isToastVisible: false,
+                toastMessage: '',
+                isCreatedLogItemOnLoadedCustomer: false
             },
             computed: {
                 theMessageTemplatesFiltered() {
@@ -352,6 +364,14 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                sendToast(message) {
+                    this.isToastVisible = true;
+                    this.toastMessage = message;
+
+                    setTimeout(() => {
+                        this.isToastVisible = false;
+                    }, 3500);
+                },
                 setShowRelatedLogs(logId) {
                     if (this.showRelatedLogs[logId]) {
                         this.$delete(this.showRelatedLogs, logId)
@@ -600,16 +620,30 @@ $(document).one('trigger::vue_init', function () {
                     this.isNewLogFormActive = false
                     this.resetNewLogForm()
                 },
+                setSeletedValidation(val) {
+                    this.seletedValidation = val
+                    this.isRemeberValidationType = false
+                },
                 submitNewLog() {
+                    if (this.seletedValidation.length < 1) {
+                        this.isRemeberValidationTypeAnimate = true
+                        this.isRemeberValidationType = true
+                        setTimeout(_ => {
+                            this.isRemeberValidationTypeAnimate = false
+                        }, 1500)
+                        return
+                    }
                     let newLog = [{
                         CUSTOMER_ID: this.theCustomerId,
                         REF_IDS: this.relatedLog,
                         CAT: this.selectedCat,
                         REASON: this.selectedReason,
                         RESULT: this.selectedResult,
-                        MSG: this.selectedMessage
+                        MSG: this.selectedMessage,
+                        VALIDATION_TYPE: this.seletedValidation
                     }]
                     $('.input_set_log_data > input').val(JSON.stringify(newLog))
+                    this.isCreatedLogItemOnLoadedCustomer = true
                     this.isSubmittingNewLog = true
                     this.observeChanges('.output_log_created', (jsonSucces) => {
                         this.pushToLogs(jsonSucces)
@@ -624,6 +658,9 @@ $(document).one('trigger::vue_init', function () {
                     this.selectedMessage = ''
                     this.isSubmittingNewLog = false
                     this.relatedLog = null
+                    this.seletedValidation = ''
+                    this.isRemeberValidationTypeAnimate = false
+                    this.isRemeberValidationType = false
                 },
                 readCustomer() {
                     if (this.theCustomerPhoneNumber.length !== 8) {
@@ -640,6 +677,8 @@ $(document).one('trigger::vue_init', function () {
                         this.$set(this.theCustomer, 'vPhone', this.theCustomerPhoneNumber)
                         this.theCustomerId = this.theCustomerPhoneNumber
                         this.theCustomerPhoneNumber = ''
+                        // Hasn't yet created a log on newly loaded customer
+                        this.isCreatedLogItemOnLoadedCustomer = false
                     });
                     $('.get_customer_data > a').click();
 
@@ -773,6 +812,9 @@ $(document).one('trigger::vue_init', function () {
                     this.closeEtrayModal()
                 })
                 $(document).on('vue::new_case_created', () => {
+                    if (!this.isCreatedLogItemOnLoadedCustomer) {
+                        this.sendToast('HUSK at oprette en ny logning også')
+                    }
                     this.readCustomerLog()
                 })
                 addEtrayCreateFormEventListeners()
