@@ -288,21 +288,34 @@
                                     </div>
                                     <li class="c-logs__log" v-if="key == 0 || showRelatedLogs[logs[0].ID]">
                                         <div class="c-logs__log__meta">
-                                            <div>{{ activity.CREATED_TIME }}</div>{{ activity.CREATED_BY }} · {{
-                                            activity.ID
-                                            }}
+                                            <div class="c-logs__log__meta__left">
+                                                <div class="c-logs__log__meta__timestamp">{{ activity.CREATED_TIME }}
+                                                </div>
+                                                <div class="c-logs__log__meta__created_by">
+                                                    {{ activity.CREATED_BY }} · {{
+                                                    activity.ID
+                                                    }}
+                                                </div>
+                                            </div>
+                                            <div class="c-logs__log__meta__status">
+                                                <p v-if="activity.STATUS === 'Closed'">
+                                                    {{ activity.CLOSED_TIME }}
+                                                </p>
+                                                <div class="pill"
+                                                    :class="{'pill--danger': activity.STATUS === 'Closed'}">
+                                                    <template v-if="activity.STATUS === 'Closed'">
+                                                        Lukket
+                                                    </template>
+                                                    <template v-else-if="activity.STATUS === 'Open'">
+                                                        Åben
+                                                    </template>
+                                                    <template v-else>
+                                                        {{ activity.STATUS }}
+                                                    </template>
+                                                </div>
+                                            </div>
                                         </div>
                                         <ul class="c-logs__log__content" v-if="activity.TYPE">
-                                            <li class="c-logs__log__content__item" v-if="activity.STATUS">
-                                                <label class="c-label">STATUS</label>
-                                                <p><span class="pill"
-                                                        :class="{'pill--danger': activity.STATUS === 'Closed'}">{{
-                                                        activity.STATUS }}
-                                                    </span>
-                                                    <span class="c-logs__log__content__item__closing-time"
-                                                        v-if="activity.CLOSED_TIME">{{ activity.CLOSED_TIME }}</span>
-                                                </p>
-                                            </li>
                                             <li class="c-logs__log__content__item"><label class="c-label">Type</label>
                                                 <p>{{ activity.TYPE }}</p>
                                             </li>
