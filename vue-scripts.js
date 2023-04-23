@@ -71,7 +71,8 @@ $(document).one('trigger::vue_init', function () {
                 theMessageEmailAddress: '',
                 theMessagePhoneNumber: '',
                 activeFilterDateRange: [],
-                isShowDateRangePanel: false
+                isShowDateRangePanel: false,
+                showRelatedLogs: {}
             },
             computed: {
                 theMessageTemplatesFiltered() {
@@ -351,6 +352,13 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                setShowRelatedLogs(logId) {
+                    if (this.showRelatedLogs[logId]) {
+                        this.$delete(this.showRelatedLogs, logId)
+                    } else {
+                        this.$set(this.showRelatedLogs, logId, true)
+                    }
+                },
                 onFilterLabelClick(filterType) {
                     if (this.activeLogFilters[filterType.label]) {
                         this.$delete(this.activeLogFilters, filterType.label)

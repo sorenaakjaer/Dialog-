@@ -1877,3 +1877,49 @@ select {
     background: none;
     box-shadow: none;
 }
+
+.c-logs-chain--toogle-related {
+    position: relative;
+    margin-left: 4rem;
+    font-size: 14px;
+}
+
+.c-logs-chain--toogle-related::before {
+    content: '';
+    display: block;
+    background: var(--darkYellow);
+    height: 2px;
+    position: absolute;
+    top: 8px;
+    left: -4rem;
+    width: 4rem;
+}
+
+.c-logs-chain--toogle-related.c-logs-chain--toogle-related--open::after {
+    content: '';
+    height: 100%;
+    width: 2px;
+    background-color: var(--darkYellow);
+    position: absolute;
+    top: 8px;
+    left: -1rem;
+}
+
+.c-logs-chain--toogle-related>p {
+    background: #fff;
+    display: inline-block;
+    border: 1px solid var(--borderColor);
+    padding: 0 0.5rem;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--blue);
+    margin-top: -0.25rem;
+    height: 22px;
+    line-height: 22px;
+    cursor: pointer;
+}
+
+.c-logs-chain--toogle-related>p:hover {
+    background-color: var(--blue);
+    color: #fff;
+}
