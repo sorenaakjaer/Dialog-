@@ -101,7 +101,7 @@
                     <div class="c-card__dialog__new_log"
                         :class="{'c-card__dialog__new_log--active': isNewLogFormActive}">
                         <div class="c-card__header">
-                            <h4 v-if="relatedLog">Tilføj relateret sag til {{ relatedLog }}</h4>
+                            <h4 v-if="relatedLog">Tilføj relateret note til {{ relatedLog }}</h4>
                             <h4 v-else>Ny logning</h4>
                             <div class="bg-icon-hover" @click.stop="closeNewLogForm" v-if="isNewLogFormActive">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -371,7 +371,7 @@
                                                     v-for="action in activity.v_Actions"
                                                     @click="setActionOnItem(action, activity)">
                                                     <template v-if="action === 'related'">
-                                                        Tilføj relateret sag
+                                                        Tilføj relateret logning
                                                     </template>
                                                     <template v-else-if="action === 'note'">
                                                         Tilføj note
