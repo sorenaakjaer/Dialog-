@@ -390,7 +390,7 @@ $(document).one('trigger::vue_init', function () {
                 openWebVictor() {
                     const guid = this.theCustomer && this.theCustomer['GUID'] ? this.theCustomer['GUID'] : null
                     if (!guid) {
-                        window.alert('Ingen GUID på kunden')
+                        window.alert('Ingen kunde fundet i WebVictor')
                         return
                     }
                     const url = 'http://cbb.apps.mvno.dk/customers/' + guid
