@@ -972,8 +972,9 @@ ul.c-logs-chain--chained>li.c-logs__log:nth-child(2) .c-logs__log__meta:before {
 .c-logs__log__content {
     border-radius: 4px;
     padding: 0.5rem;
-    font-size: 15px;
+    font-size: 12px;
     border: 1px solid #ccc;
+    line-height: 1;
 }
 
 .c-logs__log__content p {
