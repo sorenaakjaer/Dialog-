@@ -720,7 +720,15 @@ $(document).one('trigger::vue_init', function () {
                         this.user = success[0]
                         this.isUserLoading = false
                         this.$nextTick(_ => {
-                            this.$refs.customer_number_input.focus()
+                            if ($('.input_customer_id > input').val().length > 0)
+                                {
+                                this.theCustomerPhoneNumber = $('.input_customer_id > input').val();
+                                this.readCustomer();    
+                                }
+                            else
+                                {
+                                this.$refs.customer_number_input.focus()
+                                }
                         })
                     });
                     this.observeChanges('.output_templates', (success) => {
