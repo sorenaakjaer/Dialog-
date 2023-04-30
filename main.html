@@ -46,490 +46,483 @@
         </div>
     </template>
     <div class="c-wrapper" v-if="theCustomer">
-        <div class="c-grid">
-            <div class="c-grid__col c-grid__col__sidebar">
-                <div class="c-card">
-                    <div class="c-card__header">
-                        <h4>Kunde</h4>
-                    </div>
-                    <div class="c-card__body pad-1">
-                        <div class="the-customer" v-if="theCustomer">
-                            <ul class="marg-1-bottom" v-if="theCustomer.CUSTOMER_FIRST_NAME">
-                                <li>{{ theCustomer.CUSTOMER_FIRST_NAME }} {{ theCustomer.CUSTOMER_LAST_NAME }}</li>
-                                <li>{{ theCustomer.CUSTOMER_ADDRESS }}</li>
-                                <li>{{ theCustomer.CUSTOMER_ZIP }} {{ theCustomer.CUSTOMER_CITY }}</li>
-                            </ul>
-                            <h4 class="text-explainer c-customer--not-found" v-else>Kunden er ikke fundet</h4>
-                            <ul>
-                                <li><label class="c-label">Mobilnummer</label>{{ theCustomer.vPhone }}</li>
-                                <li><label class="c-label">Email</label>
-                                    <template v-if="theCustomer.CUSTOMER_EMAIL">{{ theCustomer.CUSTOMER_EMAIL
-                                        }}</template>
-                                    <template v-else>-</template>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+
+        <div class="c-grid__col c-grid__col__sidebar">
+            <div class="c-card">
+                <div class="c-card__header">
+                    <h4>Kunde</h4>
                 </div>
-                <div class="c-card">
-                    <div class="c-card__header">
-                        <h4>Handlinger på kunden</h4>
-                    </div>
-                    <div class="c-card__body pad-1">
-                        <div class="c-buttons">
-                            <button class="c-bttn c-bttn--blue" @click="openCreateCaseFor2ndLine">
-                                Opret sag til BackOffice
-                            </button>
-                            <button class="c-bttn c-bttn--blue" @click="openIsMessageModal">
-                                Send mail til kunde
-                            </button>
-                            <button class="c-bttn c-bttn--blue" @click="openWebVictor">
-                                Åben kunde i Web Victor
-                            </button>
-                            <button class="c-bttn c-bttn--blue" @click="openActiveOffers">
-                                Se åbne tilbud op kunden
-                            </button>
-                            <button class="c-bttn c-bttn--blue" @click="openClosedOffers">
-                                Se lukket tilbud op kunden
-                            </button>
-                        </div>
+                <div class="c-card__body pad-1">
+                    <div class="the-customer" v-if="theCustomer">
+                        <ul class="marg-1-bottom" v-if="theCustomer.CUSTOMER_FIRST_NAME">
+                            <li>{{ theCustomer.CUSTOMER_FIRST_NAME }} {{ theCustomer.CUSTOMER_LAST_NAME }}</li>
+                            <li>{{ theCustomer.CUSTOMER_ADDRESS }}</li>
+                            <li>{{ theCustomer.CUSTOMER_ZIP }} {{ theCustomer.CUSTOMER_CITY }}</li>
+                        </ul>
+                        <h4 class="text-explainer c-customer--not-found" v-else>Kunden er ikke fundet</h4>
+                        <ul>
+                            <li><label class="c-label">Mobilnummer</label>{{ theCustomer.vPhone }}</li>
+                            <li><label class="c-label">Email</label>
+                                <template v-if="theCustomer.CUSTOMER_EMAIL">{{ theCustomer.CUSTOMER_EMAIL
+                                    }}</template>
+                                <template v-else>-</template>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="c-grid__col c-grid__col__main">
-                <div class="c-card">
-                    <div class="c-card__dialog__new_log"
-                        :class="{'c-card__dialog__new_log--active': isNewLogFormActive}">
-                        <div class="c-card__header">
-                            <h4 v-if="relatedLog">Tilføj relateret note til {{ relatedLog }}</h4>
-                            <h4 v-else>Ny logning</h4>
-                            <div class="bg-icon-hover" @click.stop="closeNewLogForm" v-if="isNewLogFormActive">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="c-card__body pad-1">
-                            <form @submit.prevent>
-                                <div class="c-select__row">
-                                    <div class="c-input-group">
-                                        <multiselect :multiple="false" :show-labels="false"
-                                            placeholder="Søg og vælg formål" v-model="selectedCat"
-                                            ref="new_log_category" :options="filteredCategories"
-                                            @select="onSelectedChange('category')">
-                                            <span slot="noResult" class="c-multiselect-no_result">Ingen formål
-                                                matcher
-                                                din
-                                                søgning</span>
-                                        </multiselect>
-                                    </div>
-                                    <div v-if="filteredReasons.length > 0" class="c-input-group">
-                                        <multiselect :multiple="false" :show-labels="false"
-                                            placeholder="Søg og vælg årsag" v-model="selectedReason"
-                                            ref="new_log_reason" :options="filteredReasons"
-                                            @select="onSelectedChange('reason')">
-                                            <span slot="noResult" class="c-multiselect-no_result">Ingen årsager
-                                                matcher
-                                                din
-                                                søgning</span>
-                                        </multiselect>
-                                    </div>
-                                    <div v-if="filteredResults.length > 0" class="c-input-group">
-                                        <multiselect :multiple="false" :show-labels="false"
-                                            placeholder="Søg og vælg result" v-model="selectedResult"
-                                            ref="new_log_result" :options="filteredResults"
-                                            @select="onSelectedChange('result')">
-                                            <span slot="noResult" class="c-multiselect-no_result">Ingen resultater
-                                                matcher
-                                                din
-                                                søgning</span>
-                                        </multiselect>
-                                    </div>
-                                </div>
-                                <transition name="expand">
-                                    <div v-if="selectedResult" class="c-input-group">
-                                        <label class="c-label">Uddyb henvendelse og beskriv hvad du har aftalt med
-                                            kunden</label>
-                                        <textarea v-model="selectedMessage" ref="new_log_message" rows="4"
-                                            @keydown="onNewLogTextareaKeyUp($event)" cols="50"></textarea>
-                                    </div>
-                                </transition>
-                                <transition name="expand">
-                                    <div class="c-input-group__buttons"
-                                        v-if="selectedCat && selectedReason && selectedResult">
-                                        <div class="c-input-group__buttons__left"
-                                            :class="{'shake': isRemeberValidationTypeAnimate}">
-                                            <label class="c-label">
-                                                Vælg valideringstype
-                                            </label>
-                                            <div class="c-input-group__radio-group">
-                                                <button v-for="valideringstype in validationButtonArr"
-                                                    @keydown="onNewLogTextareaKeyUp($event)"
-                                                    class="c-bttn--secondary c-bttn__radio"
-                                                    :aria-label="valideringstype.tooltip"
-                                                    :class="[
-                                                    {'hint--bottom': valideringstype.tooltip.length > 0},
-                                                    {'c-bttn__radio--checked': seletedValidation === valideringstype.val}]"
-                                                    @click="setSeletedValidation(valideringstype.val)">{{
-                                                    valideringstype.val }}
-                                                    <div class="c-bttn__radio__circle"></div>
-                                                </button>
-                                            </div>
-                                            <p class="text--error" v-if="isRemeberValidationType">Der skal vælges en
-                                                valideringstype</p>
-                                        </div>
-                                        <div class="c-input-group__submit">
-                                            <button class="c-bttn c-bttn--blue" @click="closeNewLogForm"
-                                                @keydown="onNewLogTextareaKeyUp($event)">Annullér</button>
-                                            <div class="hint--bottom" :aria-label="metaKey + ' + Enter'">
-                                                <button class="c-bttn c-bttn--primary"
-                                                    @keydown="onNewLogTextareaKeyUp($event)"
-                                                    :class="{'c-bttn--loading': isSubmittingNewLog}"
-                                                    @click="submitNewLog"><template
-                                                        v-if="!isSubmittingNewLog">Gem</template></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </transition>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="c-card__header">
-                        <h4>Dialog tråd</h4>
-                        <!--SEARCH -->
-                        <div class="c-card__header__right c-card__header__right__filters">
-                            <div class="c-filters" v-for="filterType in logFilters" :class="[
-                                {'c-filters--active': filterType.isLogFiltersActive},
-                                {'c-filters--selected': filterType.activeLogFilter}
-                                ]" v-click-outside="closeVueDropdown">
-                                <div class="c-filter__active-filter"
-                                    @click="setTheActiveLogFilterDropdown(filterType.label)">
-                                    <div class="c-filter__active-filter__label"
-                                        @click.stop="onFilterLabelClick(filterType)">
-                                        <svg v-if="filterType.activeLogFilter" xmlns="http://www.w3.org/2000/svg"
-                                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                        <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
-                                        </svg>
-                                        <span>{{ filterType.title }}</span>
-                                    </div>
-                                    <date-picker v-if="filterType.activeLogFilter === 'customDate'"
-                                        v-model="activeFilterDateRange" type="date" range format="DD-MM-YYYY"
-                                        :clearable="false" :open.sync="isShowDateRangePanel"
-                                        placeholder="Vælg et datointerval"></date-picker>
-                                    <template v-else>
-                                        {{filterType.activeTitle }}
-                                    </template>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                    </svg>
-                                </div>
-                                <transition name="dropdown">
-                                    <ul class="c-filters__dropdown" v-if="filterType.isLogFiltersActive">
-                                        <li v-for="filter in filterType.options" :key="filter.value"
-                                            @click="setActiveLogFilter(filterType, filter)">{{
-                                            filter.title}}
-                                        </li>
-                                    </ul>
-                                </transition>
-                            </div>
-                            <div class="c-search-group" :class="{'c-search-group--active': searchQuery.length > 0}">
-                                <div class="c-icon">
-                                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24">
-                                        <title>search</title>
-                                        <path
-                                            d="M20.85,19.44l-4-4a2.44,2.44,0,0,0-.43-.35l-1-.69h0A7,7,0,1,0,10,17a7,7,0,0,0,4.37-1.53h0l.75,1a2.6,2.6,0,0,0,.3.36l4,4a.5.5,0,0,0,.71,0l.7-.7A.5.5,0,0,0,20.85,19.44ZM10,15a5,5,0,1,1,5-5A5,5,0,0,1,10,15Z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <input type="search" ref="v_search_query" @input="debounceSearch" class="c-search-cases"
-                                    placeholder="Søg">
-                                <div class="c-search-group__clear" @click="clearSearchQuery">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="c-card__body c-card__dialog">
-                        <div class="c-loader" v-if="isLogLoading"></div>
-                        <template v-else>
-                            <h4 class="text-explainer" v-if="logsSorted.length < 1">Ingen aktivitet logget på dette
-                                nummer
-                            </h4>
-                            <h4 class="text-explainer" v-if="logsSorted.length > 0 && logsFiltered.length < 1">Ingen
-                                aktiviteter matcher din søgning</h4>
-                        </template>
-                        <div class="c-logs" :class="{'c-logs--new-log-open': isNewLogSubmitOpen}">
-                            <ul class="c-logs__chain" v-for="logs in chainedLogs"
-                                :class="{'c-logs-chain--chained': logs.length > 1}">
-                                <template v-for="(activity, key) in logs" :key="activity.ID">
-                                    <div class="c-logs-chain--toogle-related"
-                                        :class="{'c-logs-chain--toogle-related--open': showRelatedLogs[logs[0].ID]}"
-                                        v-if="key === 1">
-                                        <p @click="setShowRelatedLogs(logs[0].ID)">
-                                            <span v-if="showRelatedLogs[logs[0].ID]">Skjul</span> <span
-                                                v-else>Vis</span>
-                                            relatede sager ({{ logs.length - 1 }})
-                                        </p>
-                                    </div>
-                                    <li class="c-logs__log" v-if="key == 0 || showRelatedLogs[logs[0].ID]">
-                                        <div class="c-logs__log__meta">
-                                            <div class="c-logs__log__meta__left">
-                                                <div class="c-logs__log__meta__timestamp">{{ activity.CREATED_TIME }}
-                                                </div>
-                                                <div class="c-logs__log__meta__created_by">
-                                                    {{ activity.CREATED_BY }} · {{
-                                                    activity.ID
-                                                    }}
-                                                </div>
-                                            </div>
-                                            <div class="c-logs__log__meta__status">
-                                                <p v-if="activity.STATUS === 'Closed'">
-                                                    {{ activity.CLOSED_TIME }}
-                                                </p>
-                                                <div class="pill"
-                                                    :class="{'pill--danger': activity.STATUS === 'Closed'}">
-                                                    <template v-if="activity.STATUS === 'Closed'">
-                                                        Lukket
-                                                    </template>
-                                                    <template v-else-if="activity.STATUS === 'Open'">
-                                                        Åben
-                                                    </template>
-                                                    <template v-else>
-                                                        {{ activity.STATUS }}
-                                                    </template>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ul class="c-logs__log__content" v-if="activity.TYPE">
-                                            <li class="c-logs__log__content__item"><label class="c-label">Type</label>
-                                                <p>{{ activity.TYPE }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.CAT">
-                                                <label class="c-label">FORMÅL</label>
-                                                <p>{{ activity.CAT }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.REASON">
-                                                <label class="c-label">ÅRSAG</label>
-                                                <p>{{ activity.REASON }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.RESULT">
-                                                <label class="c-label">UDFALD</label>
-                                                <p>{{ activity.RESULT }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item c-logs__log__content__item__message"
-                                                v-if="activity.MSG">
-                                                <label class="c-label c-label--top">BESKED</label>
-                                                <div class="c-logs__log__content__item__message__message">
-                                                    <p v-text="activity.MSG" v-if="activity.v_isReadMore"></p>
-                                                    <p v-text="activity.v_MsgShort" v-else></p>
-                                                    <a @click.stop.prevent="setReadMoreForItem(activity)"
-                                                        v-if="activity.v_MsgShort.length > 150">
-                                                        <template v-if="activity.v_isReadMore">Vis mindre</template>
-                                                        <template v-else>Vis mere</template>
-                                                    </a>
-                                                </div>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.v_notes.length > 0">
-                                                <label class="c-label c-label--top">Noter</label>
-                                                <ul class="c-logs__log__notes">
-                                                    <li v-for="(cNote, key) in activity.v_notes"
-                                                        v-if="key < 2 || activity.v_isReadMoreNotes" :key="cNote.ID"
-                                                        class="c-logs__log__notes__note">
-                                                        <div class="c-logs__log__notes__note__header">
-                                                            <p>{{ cNote.CREATED_BY }}</p>
-                                                            <p>{{ cNote.TIME }}</p>
-                                                        </div>
-                                                        <div class="c-logs__log__notes__note__body">{{ cNote.MSG }}
-                                                        </div>
-                                                    </li>
-                                                    <a @click.stop.prevent="setShowMoreNotes(activity)"
-                                                        v-if="activity.v_notes.length > 2">
-                                                        <template v-if="activity.v_isReadMoreNotes">
-                                                            Vis færre noter</template>
-                                                        <template v-else>Vis flere noter</template>
-                                                    </a>
-                                                </ul>
-                                            </li>
-                                            <li class="c-logs__log__content__item c-logs__log__content__item__actions">
-                                                <label class="c-label">ACTIONS</label>
-                                                <button class="c-bttn c-bttn--secondary"
-                                                    v-for="action in activity.v_Actions"
-                                                    @click="setActionOnItem(action, activity)">
-                                                    <template v-if="action === 'related'">
-                                                        Tilføj relateret logning
-                                                    </template>
-                                                    <template v-else-if="action === 'note'">
-                                                        Tilføj note
-                                                    </template>
-                                                    <template v-else-if="action === 'close'">
-                                                        Luk sagen
-                                                    </template>
-                                                    <template v-else-if="action === 'reopen'">
-                                                        Genåben sagen
-                                                    </template>
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </template>
-                            </ul>
-                        </div>
+            <div class="c-card">
+                <div class="c-card__header">
+                    <h4>Handlinger på kunden</h4>
+                </div>
+                <div class="c-card__body pad-1">
+                    <div class="c-buttons">
+                        <button class="c-bttn c-bttn--blue" @click="openCreateCaseFor2ndLine">
+                            Opret sag til BackOffice
+                        </button>
+                        <button class="c-bttn c-bttn--blue" @click="openIsMessageModal">
+                            Send mail til kunde
+                        </button>
+                        <button class="c-bttn c-bttn--blue" @click="openWebVictor">
+                            Åben kunde i Web Victor
+                        </button>
+                        <button class="c-bttn c-bttn--blue" @click="openActiveOffers">
+                            Se åbne tilbud op kunden
+                        </button>
+                        <button class="c-bttn c-bttn--blue" @click="openClosedOffers">
+                            Se lukket tilbud op kunden
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<transition name="modal">
-    <div class="c-modal" v-if="isModal">
-        <template v-if="isMessageModal">
-            <div class="c-modal__content">
-                <div class="c-modal__content__header">
-                    <h4>Send email</h4>
-                    <div class="bg-icon-hover" @click.stop="closeModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+        <div class="c-grid__col c-grid__col__main">
+            <div class="c-grid-main__card-header" ref="cardHeader">
+                <div class="c-card__dialog__new_log" :class="{'c-card__dialog__new_log--active': isNewLogFormActive}">
+                    <div class="c-card__header">
+                        <h4 v-if="relatedLog">Tilføj relateret note til {{ relatedLog }}</h4>
+                        <h4 v-else>Ny logning</h4>
+                        <div class="bg-icon-hover" @click.stop="closeNewLogForm" v-if="isNewLogFormActive">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="c-card__body pad-1">
+                        <form @submit.prevent>
+                            <div class="c-select__row">
+                                <div class="c-input-group">
+                                    <multiselect :multiple="false" :show-labels="false" placeholder="Søg og vælg formål"
+                                        v-model="selectedCat" ref="new_log_category" :options="filteredCategories"
+                                        @select="onSelectedChange('category')">
+                                        <span slot="noResult" class="c-multiselect-no_result">Ingen formål
+                                            matcher
+                                            din
+                                            søgning</span>
+                                    </multiselect>
+                                </div>
+                                <div v-if="filteredReasons.length > 0" class="c-input-group">
+                                    <multiselect :multiple="false" :show-labels="false" placeholder="Søg og vælg årsag"
+                                        v-model="selectedReason" ref="new_log_reason" :options="filteredReasons"
+                                        @select="onSelectedChange('reason')">
+                                        <span slot="noResult" class="c-multiselect-no_result">Ingen årsager
+                                            matcher
+                                            din
+                                            søgning</span>
+                                    </multiselect>
+                                </div>
+                                <div v-if="filteredResults.length > 0" class="c-input-group">
+                                    <multiselect :multiple="false" :show-labels="false" placeholder="Søg og vælg result"
+                                        v-model="selectedResult" ref="new_log_result" :options="filteredResults"
+                                        @select="onSelectedChange('result')">
+                                        <span slot="noResult" class="c-multiselect-no_result">Ingen resultater
+                                            matcher
+                                            din
+                                            søgning</span>
+                                    </multiselect>
+                                </div>
+                            </div>
+                            <transition name="expand">
+                                <div v-if="selectedResult" class="c-input-group">
+                                    <label class="c-label">Uddyb henvendelse og beskriv hvad du har aftalt med
+                                        kunden</label>
+                                    <textarea v-model="selectedMessage" ref="new_log_message" rows="4"
+                                        @keydown="onNewLogTextareaKeyUp($event)" cols="50"></textarea>
+                                </div>
+                            </transition>
+                            <transition name="expand">
+                                <div class="c-input-group__buttons"
+                                    v-if="selectedCat && selectedReason && selectedResult">
+                                    <div class="c-input-group__buttons__left"
+                                        :class="{'shake': isRemeberValidationTypeAnimate}">
+                                        <label class="c-label">
+                                            Vælg valideringstype
+                                        </label>
+                                        <div class="c-input-group__radio-group">
+                                            <button v-for="valideringstype in validationButtonArr"
+                                                @keydown="onNewLogTextareaKeyUp($event)"
+                                                class="c-bttn--secondary c-bttn__radio"
+                                                :aria-label="valideringstype.tooltip"
+                                                :class="[
+                                                    {'hint--bottom': valideringstype.tooltip.length > 0},
+                                                    {'c-bttn__radio--checked': seletedValidation === valideringstype.val}]"
+                                                @click="setSeletedValidation(valideringstype.val)">{{
+                                                valideringstype.val }}
+                                                <div class="c-bttn__radio__circle"></div>
+                                            </button>
+                                        </div>
+                                        <p class="text--error" v-if="isRemeberValidationType">Der skal vælges en
+                                            valideringstype</p>
+                                    </div>
+                                    <div class="c-input-group__submit">
+                                        <button class="c-bttn c-bttn--blue" @click="closeNewLogForm"
+                                            @keydown="onNewLogTextareaKeyUp($event)">Annullér</button>
+                                        <div class="hint--bottom" :aria-label="metaKey + ' + Enter'">
+                                            <button class="c-bttn c-bttn--primary"
+                                                @keydown="onNewLogTextareaKeyUp($event)"
+                                                :class="{'c-bttn--loading': isSubmittingNewLog}"
+                                                @click="submitNewLog"><template
+                                                    v-if="!isSubmittingNewLog">Gem</template></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                        </form>
                     </div>
                 </div>
-                <div class="c-modal__content__body">
-                    <div class="c-send-message__form__filter c-filters">
-                        <div class="c-button c-filters__filter"
-                            :class="{'c-filters__filter--active': activeMessageType === 'email'}"
-                            @click="setActiveMessageType('email')">
-                            Email
+                <div class="c-card__header">
+                    <h4>Dialog tråd</h4>
+                    <!--SEARCH -->
+                    <div class="c-card__header__right c-card__header__right__filters">
+                        <div class="c-filters" v-for="filterType in logFilters" :class="[
+                                {'c-filters--active': filterType.isLogFiltersActive},
+                                {'c-filters--selected': filterType.activeLogFilter}
+                                ]" v-click-outside="closeVueDropdown">
+                            <div class="c-filter__active-filter"
+                                @click="setTheActiveLogFilterDropdown(filterType.label)">
+                                <div class="c-filter__active-filter__label"
+                                    @click.stop="onFilterLabelClick(filterType)">
+                                    <svg v-if="filterType.activeLogFilter" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                        class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12">
+                                        </path>
+                                    </svg>
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+                                    </svg>
+                                    <span>{{ filterType.title }}</span>
+                                </div>
+                                <date-picker v-if="filterType.activeLogFilter === 'customDate'"
+                                    v-model="activeFilterDateRange" type="date" range format="DD-MM-YYYY"
+                                    :clearable="false" :open.sync="isShowDateRangePanel"
+                                    placeholder="Vælg et datointerval"></date-picker>
+                                <template v-else>
+                                    {{filterType.activeTitle }}
+                                </template>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </div>
+                            <transition name="dropdown">
+                                <ul class="c-filters__dropdown" v-if="filterType.isLogFiltersActive">
+                                    <li v-for="filter in filterType.options" :key="filter.value"
+                                        @click="setActiveLogFilter(filterType, filter)">{{
+                                        filter.title}}
+                                    </li>
+                                </ul>
+                            </transition>
                         </div>
-                        <!--<div class="c-button c-filters__filter"
+                        <div class="c-search-group" :class="{'c-search-group--active': searchQuery.length > 0}">
+                            <div class="c-icon">
+                                <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24">
+                                    <title>search</title>
+                                    <path
+                                        d="M20.85,19.44l-4-4a2.44,2.44,0,0,0-.43-.35l-1-.69h0A7,7,0,1,0,10,17a7,7,0,0,0,4.37-1.53h0l.75,1a2.6,2.6,0,0,0,.3.36l4,4a.5.5,0,0,0,.71,0l.7-.7A.5.5,0,0,0,20.85,19.44ZM10,15a5,5,0,1,1,5-5A5,5,0,0,1,10,15Z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <input type="search" ref="v_search_query" @input="debounceSearch" class="c-search-cases"
+                                placeholder="Søg">
+                            <div class="c-search-group__clear" @click="clearSearchQuery">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="c-card__body c-card__dialog">
+                <div class="c-loader" v-if="isLogLoading"></div>
+                <template v-else>
+                    <h4 class="text-explainer" v-if="logsSorted.length < 1">Ingen aktivitet logget på dette
+                        nummer
+                    </h4>
+                    <h4 class="text-explainer" v-if="logsSorted.length > 0 && logsFiltered.length < 1">Ingen
+                        aktiviteter matcher din søgning</h4>
+                </template>
+                <div class="c-logs" :class="{'c-logs--new-log-open': isNewLogSubmitOpen}" ref="logs_container">
+                    <ul class="c-logs__chain" v-for="logs in chainedLogs"
+                        :class="{'c-logs-chain--chained': logs.length > 1}">
+                        <template v-for="(activity, key) in logs" :key="activity.ID">
+                            <div class="c-logs-chain--toogle-related"
+                                :class="{'c-logs-chain--toogle-related--open': showRelatedLogs[logs[0].ID]}"
+                                v-if="key === 1">
+                                <p @click="setShowRelatedLogs(logs[0].ID)">
+                                    <span v-if="showRelatedLogs[logs[0].ID]">Skjul</span> <span v-else>Vis</span>
+                                    relatede sager ({{ logs.length - 1 }})
+                                </p>
+                            </div>
+                            <li class="c-logs__log" v-if="key == 0 || showRelatedLogs[logs[0].ID]">
+                                <div class="c-logs__log__meta">
+                                    <div class="c-logs__log__meta__left">
+                                        <div class="c-logs__log__meta__timestamp">{{ activity.CREATED_TIME }}
+                                        </div>
+                                        <div class="c-logs__log__meta__created_by">
+                                            {{ activity.CREATED_BY }} · {{
+                                            activity.ID
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div class="c-logs__log__meta__status">
+                                        <p v-if="activity.STATUS === 'Closed'">
+                                            {{ activity.CLOSED_TIME }}
+                                        </p>
+                                        <div class="pill" :class="{'pill--danger': activity.STATUS === 'Closed'}">
+                                            <template v-if="activity.STATUS === 'Closed'">
+                                                Lukket
+                                            </template>
+                                            <template v-else-if="activity.STATUS === 'Open'">
+                                                Åben
+                                            </template>
+                                            <template v-else>
+                                                {{ activity.STATUS }}
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="c-logs__log__content" v-if="activity.TYPE">
+                                    <li class="c-logs__log__content__item"><label class="c-label">Type</label>
+                                        <p>{{ activity.TYPE }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item" v-if="activity.CAT">
+                                        <label class="c-label">FORMÅL</label>
+                                        <p>{{ activity.CAT }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item" v-if="activity.REASON">
+                                        <label class="c-label">ÅRSAG</label>
+                                        <p>{{ activity.REASON }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item" v-if="activity.RESULT">
+                                        <label class="c-label">UDFALD</label>
+                                        <p>{{ activity.RESULT }}</p>
+                                    </li>
+                                    <li class="c-logs__log__content__item c-logs__log__content__item__message"
+                                        v-if="activity.MSG">
+                                        <label class="c-label c-label--top">BESKED</label>
+                                        <div class="c-logs__log__content__item__message__message">
+                                            <p v-text="activity.MSG" v-if="activity.v_isReadMore"></p>
+                                            <p v-text="activity.v_MsgShort" v-else></p>
+                                            <a @click.stop.prevent="setReadMoreForItem(activity)"
+                                                v-if="activity.v_MsgShort.length > 150">
+                                                <template v-if="activity.v_isReadMore">Vis mindre</template>
+                                                <template v-else>Vis mere</template>
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <li class="c-logs__log__content__item" v-if="activity.v_notes.length > 0">
+                                        <label class="c-label c-label--top">Noter</label>
+                                        <ul class="c-logs__log__notes">
+                                            <li v-for="(cNote, key) in activity.v_notes"
+                                                v-if="key < 2 || activity.v_isReadMoreNotes" :key="cNote.ID"
+                                                class="c-logs__log__notes__note">
+                                                <div class="c-logs__log__notes__note__header">
+                                                    <p>{{ cNote.CREATED_BY }}</p>
+                                                    <p>{{ cNote.TIME }}</p>
+                                                </div>
+                                                <div class="c-logs__log__notes__note__body">{{ cNote.MSG }}
+                                                </div>
+                                            </li>
+                                            <a @click.stop.prevent="setShowMoreNotes(activity)"
+                                                v-if="activity.v_notes.length > 2">
+                                                <template v-if="activity.v_isReadMoreNotes">
+                                                    Vis færre noter</template>
+                                                <template v-else>Vis flere noter</template>
+                                            </a>
+                                        </ul>
+                                    </li>
+                                    <li class="c-logs__log__content__item c-logs__log__content__item__actions">
+                                        <label class="c-label">ACTIONS</label>
+                                        <button class="c-bttn c-bttn--secondary" v-for="action in activity.v_Actions"
+                                            @click="setActionOnItem(action, activity)">
+                                            <template v-if="action === 'related'">
+                                                Tilføj relateret logning
+                                            </template>
+                                            <template v-else-if="action === 'note'">
+                                                Tilføj note
+                                            </template>
+                                            <template v-else-if="action === 'close'">
+                                                Luk sagen
+                                            </template>
+                                            <template v-else-if="action === 'reopen'">
+                                                Genåben sagen
+                                            </template>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </li>
+                        </template>
+                    </ul>
+                    <div class="c-loader" v-if="hasMoreLogs"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <transition name="modal">
+        <div class="c-modal" v-if="isModal">
+            <template v-if="isMessageModal">
+                <div class="c-modal__content">
+                    <div class="c-modal__content__header">
+                        <h4>Send email</h4>
+                        <div class="bg-icon-hover" @click.stop="closeModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="c-modal__content__body">
+                        <div class="c-send-message__form__filter c-filters">
+                            <div class="c-button c-filters__filter"
+                                :class="{'c-filters__filter--active': activeMessageType === 'email'}"
+                                @click="setActiveMessageType('email')">
+                                Email
+                            </div>
+                            <!--<div class="c-button c-filters__filter"
                             :class="{'c-filters__filter--active': activeMessageType === 'sms'}"
                             @click="setActiveMessageType('sms')">
                             SMS
                         </div>-->
-                    </div>
-                    <form class="c-send-message__form" @submit.prevent>
-                        <div class="c-input-group">
-                            <label class="c-label">Vælg template</label>
-                            <select ref="send_message_select" v-model="selectedTemplate"
-                                @change="setStandardTemplate($event.target.value)">
-                                <option value="">Vælg..</option>
-                                <option v-for="template in theMessageTemplatesFiltered" :value="template.DISPLAY_NAME">
-                                    {{ template.DISPLAY_NAME }}
-                                </option>
-                            </select>
                         </div>
-                        <div class="c-input-group" v-if="activeMessageType === 'email'" :class="{
+                        <form class="c-send-message__form" @submit.prevent>
+                            <div class="c-input-group">
+                                <label class="c-label">Vælg template</label>
+                                <select ref="send_message_select" v-model="selectedTemplate"
+                                    @change="setStandardTemplate($event.target.value)">
+                                    <option value="">Vælg..</option>
+                                    <option v-for="template in theMessageTemplatesFiltered"
+                                        :value="template.DISPLAY_NAME">
+                                        {{ template.DISPLAY_NAME }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="c-input-group" v-if="activeMessageType === 'email'" :class="{
                             'js-input--error': theMessageFormErrors.email,
                             }">
-                            <label class="c-label">Email</label>
-                            <input type="text" v-model="theMessageEmailAddress" @keyup="clearFormError('email')" />
-                            <div class="c-input-error" v-if="theMessageFormErrors.email">
-                                {{ theMessageFormErrors.email }}
+                                <label class="c-label">Email</label>
+                                <input type="text" v-model="theMessageEmailAddress" @keyup="clearFormError('email')" />
+                                <div class="c-input-error" v-if="theMessageFormErrors.email">
+                                    {{ theMessageFormErrors.email }}
+                                </div>
                             </div>
-                        </div>
-                        <div class="c-input-group" v-if="activeMessageType === 'sms'" :class="{
+                            <div class="c-input-group" v-if="activeMessageType === 'sms'" :class="{
                             'js-input--error': theMessageFormErrors.phone,
                             }">
-                            <label class="c-label">Telefonnummer</label>
-                            <input type="text" v-model="theMessagePhoneNumber" @keyup="clearFormError('phone')" />
-                            <div class="c-input-error" v-if="theMessageFormErrors.phone">
-                                {{ theMessageFormErrors.phone }}
+                                <label class="c-label">Telefonnummer</label>
+                                <input type="text" v-model="theMessagePhoneNumber" @keyup="clearFormError('phone')" />
+                                <div class="c-input-error" v-if="theMessageFormErrors.phone">
+                                    {{ theMessageFormErrors.phone }}
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="c-input-group" v-if="activeMessageType === 'email'" :class="{
+                            <div class="c-input-group" v-if="activeMessageType === 'email'" :class="{
                             'js-input--error': theMessageFormErrors.subject,
                             }">
-                            <label class="c-label">Emnefelt</label>
-                            <input type="text" v-model="theMessageSubject" @keyup="clearFormError('subject')" />
-                            <div class="c-input-error" v-if="theMessageFormErrors.subject">
-                                {{ theMessageFormErrors.subject }}
+                                <label class="c-label">Emnefelt</label>
+                                <input type="text" v-model="theMessageSubject" @keyup="clearFormError('subject')" />
+                                <div class="c-input-error" v-if="theMessageFormErrors.subject">
+                                    {{ theMessageFormErrors.subject }}
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="c-input-group" :class="{
+                            <div class="c-input-group" :class="{
                             'js-input--error': theMessageFormErrors.message,
                             }">
-                            <label class="c-label">Besked</label>
-                            <textarea ref="the_message_message_textarea" @keyup="clearFormError('message')"
-                                v-model="theMessageMessage" rows="4" cols="50"></textarea>
-                            <div class="c-input-error" v-if="theMessageFormErrors.message">
-                                {{ theMessageFormErrors.message }}
+                                <label class="c-label">Besked</label>
+                                <textarea ref="the_message_message_textarea" @keyup="clearFormError('message')"
+                                    v-model="theMessageMessage" rows="4" cols="50"></textarea>
+                                <div class="c-input-error" v-if="theMessageFormErrors.message">
+                                    {{ theMessageFormErrors.message }}
+                                </div>
+                            </div>
+                            <div class="c-input-group__submit">
+                                <button class="c-bttn c-bttn--blue" @click.prevent="closeModal">Annullér</button>
+                                <button class="c-bttn c-bttn--primary" :class="{'c-bttn--loading': isSendingMessage}"
+                                    @click.prevent="sendMessage"><template v-if="!isSendingMessage">Send
+                                        {{ activeMessageType }}</template></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </template>
+            <template v-if="theActiveLogAction">
+                <div class="c-modal__content">
+                    <div class="c-modal__content__header">
+                        <h4 v-if="theActiveLogAction === 'note'">Tiløj note</h4>
+                        <h4 v-if="theActiveLogAction === 'close'">Luk sagen</h4>
+                        <h4 v-if="theActiveLogAction === 'reopen'">Genåben sagen</h4>
+                        <div class="bg-icon-hover" @click.stop="closeModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="c-modal__content__body">
+                        <div>
+                            <div class="c-input-group">
+                                <label class="c-label" v-if="theActiveLogAction === 'note'">
+                                    Tifløj note til sagen
+                                </label>
+                                <label class="c-label" v-else>
+                                    Evt. note til sagen
+                                </label>
+                                <textarea ref="ref_add_message_textarea" rows="4" cols="50"></textarea>
+                            </div>
+                            <div class="c-form__buttons">
+                                <button class="c-bttn" @click.stop="closeModal">Annullér</button>
+                                <button class="c-bttn c-bttn--primary" :class="{'c-bttn--loading': isLoadingLogAddNote}"
+                                    @click.stop="saveLogItemAction($refs.ref_add_message_textarea.value)">
+                                    <template v-if="!isLoadingLogAddNote">
+                                        <template v-if="theActiveLogAction === 'note'">Gem note</template>
+                                        <template v-if="theActiveLogAction === 'close'">Luk sag</template>
+                                        <template v-if="theActiveLogAction === 'reopen'">Genåben sag</template>
+                                    </template>
+                                </button>
                             </div>
                         </div>
-                        <div class="c-input-group__submit">
-                            <button class="c-bttn c-bttn--blue" @click.prevent="closeModal">Annullér</button>
-                            <button class="c-bttn c-bttn--primary" :class="{'c-bttn--loading': isSendingMessage}"
-                                @click.prevent="sendMessage"><template v-if="!isSendingMessage">Send
-                                    {{ activeMessageType }}</template></button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </template>
-        <template v-if="theActiveLogAction">
-            <div class="c-modal__content">
-                <div class="c-modal__content__header">
-                    <h4 v-if="theActiveLogAction === 'note'">Tiløj note</h4>
-                    <h4 v-if="theActiveLogAction === 'close'">Luk sagen</h4>
-                    <h4 v-if="theActiveLogAction === 'reopen'">Genåben sagen</h4>
-                    <div class="bg-icon-hover" @click.stop="closeModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
                     </div>
                 </div>
-                <div class="c-modal__content__body">
-                    <div>
-                        <div class="c-input-group">
-                            <label class="c-label" v-if="theActiveLogAction === 'note'">
-                                Tifløj note til sagen
-                            </label>
-                            <label class="c-label" v-else>
-                                Evt. note til sagen
-                            </label>
-                            <textarea ref="ref_add_message_textarea" rows="4" cols="50"></textarea>
-                        </div>
-                        <div class="c-form__buttons">
-                            <button class="c-bttn" @click.stop="closeModal">Annullér</button>
-                            <button class="c-bttn c-bttn--primary" :class="{'c-bttn--loading': isLoadingLogAddNote}"
-                                @click.stop="saveLogItemAction($refs.ref_add_message_textarea.value)">
-                                <template v-if="!isLoadingLogAddNote">
-                                    <template v-if="theActiveLogAction === 'note'">Gem note</template>
-                                    <template v-if="theActiveLogAction === 'close'">Luk sag</template>
-                                    <template v-if="theActiveLogAction === 'reopen'">Genåben sag</template>
-                                </template>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </div>
-</transition>
-<transition name="slide-up">
-    <div v-if="isToastVisible" class="toast">
-        {{ toastMessage }}
-    </div>
-</transition>
-<transition name="opacity">
-    <div class="c-modal-overlay" v-if="isModal || isEtrayModal" @click="closeModal"></div>
-</transition>
+            </template>
+        </div>
+    </transition>
+    <transition name="slide-up">
+        <div v-if="isToastVisible" class="toast">
+            {{ toastMessage }}
+        </div>
+    </transition>
+    <transition name="opacity">
+        <div class="c-modal-overlay" v-if="isModal || isEtrayModal" @click="closeModal"></div>
+    </transition>
 </div>
 
 <div class="c-modal c-modal--etray js-c-modal c-modal--hidden">
