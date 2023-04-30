@@ -375,8 +375,7 @@ $(document).one('trigger::vue_init', function () {
                     window.scrollTo(0, 0);
                     if (newVal !== oldVal) {
                         if (newVal) {
-                            this.updateLogs();
-                            window.addEventListener("scroll", this.handleScroll);
+                            this.updateScrollHandler()
                         } else {
                             window.removeEventListener("scroll", this.handleScroll);
                         }
@@ -384,11 +383,17 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                updateScrollHandler() {
+                    this.updateLogs();
+                    window.removeEventListener("scroll", this.handleScroll);
+                    window.addEventListener("scroll", this.handleScroll);
+                },
                 handleScroll() {
                     const windowHeight = document.documentElement.clientHeight;
                     const scrollTop = document.documentElement.scrollTop;
                     const docHeight = document.documentElement.scrollHeight;
                     if (scrollTop + windowHeight >= docHeight) {
+                        console.log('scrolled to bottom')
                         this.showMoreItems();
                     }
                 },
@@ -726,6 +731,7 @@ $(document).one('trigger::vue_init', function () {
                             this.$set(log, 'v_isReadMoreNotes', false);
                         })
                         this.isLogLoading = false
+                        this.updateScrollHandler()
                     });
                     $('.get_log_data > a').click();
 
@@ -737,6 +743,7 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_log_options_data > a').click()
                 },
                 readCustomerLog() {
+                    console.log('readCustomerLog')
                     $('.input_customer_id > input').val(this.theCustomerId)
                     this.isLogLoading = true
                     this.observeChanges('.output_log_data', (success) => {
@@ -746,6 +753,7 @@ $(document).one('trigger::vue_init', function () {
                             this.$set(log, 'v_isReadMoreNotes', false);
                         })
                         this.isLogLoading = false
+                        console.log('logs read')
                     });
                     $('.get_log_data > a').click();
                 },
