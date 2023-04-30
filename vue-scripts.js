@@ -383,10 +383,28 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
+                scrollTrigger() {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.intersectionRatio > 0) {
+                                console.log('its in dom')
+                                this.showMoreItems();
+                            }
+                        })
+                    })
+                    this.$nextTick(_ => {
+                        const el = this.$refs.infineScrollTrigger
+                        console.log({ el })
+                        if (el) {
+                            observer.observe(this.$refs.infineScrollTrigger)
+                        }
+                    })
+                },
                 updateScrollHandler() {
                     this.updateLogs();
-                    window.removeEventListener("scroll", this.handleScroll);
-                    window.addEventListener("scroll", this.handleScroll);
+                    this.scrollTrigger()
+                    // window.removeEventListener("scroll", this.handleScroll);
+                    // window.addEventListener("scroll", this.handleScroll);
                 },
                 handleScroll() {
                     const windowHeight = document.documentElement.clientHeight;
