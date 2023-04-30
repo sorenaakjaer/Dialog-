@@ -46,7 +46,7 @@
         </div>
     </template>
     <div class="c-wrapper" v-if="theCustomer">
-        <div class="c-grid">
+        <div>
             <div class="c-grid__col c-grid__col__sidebar">
                 <div class="c-card">
                     <div class="c-card__header">
@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div class="c-grid__col c-grid__col__main">
-                <div class="c-card">
+                <div class="c-grid-main__card-header" ref="cardHeader">
                     <div class="c-card__dialog__new_log"
                         :class="{'c-card__dialog__new_log--active': isNewLogFormActive}">
                         <div class="c-card__header">
@@ -211,7 +211,8 @@
                                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                             class="w-6 h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M6 18L18 6M6 6l12 12"></path>
+                                                d="M6 18L18 6M6 6l12 12">
+                                            </path>
                                         </svg>
                                         <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -264,131 +265,130 @@
                             </div>
                         </div>
                     </div>
-                    <div class="c-card__body c-card__dialog">
-                        <div class="c-loader" v-if="isLogLoading"></div>
-                        <template v-else>
-                            <h4 class="text-explainer" v-if="logsSorted.length < 1">Ingen aktivitet logget på dette
-                                nummer
-                            </h4>
-                            <h4 class="text-explainer" v-if="logsSorted.length > 0 && logsFiltered.length < 1">Ingen
-                                aktiviteter matcher din søgning</h4>
-                        </template>
-                        <div class="c-logs" :class="{'c-logs--new-log-open': isNewLogSubmitOpen}">
-                            <ul class="c-logs__chain" v-for="logs in chainedLogs"
-                                :class="{'c-logs-chain--chained': logs.length > 1}">
-                                <template v-for="(activity, key) in logs" :key="activity.ID">
-                                    <div class="c-logs-chain--toogle-related"
-                                        :class="{'c-logs-chain--toogle-related--open': showRelatedLogs[logs[0].ID]}"
-                                        v-if="key === 1">
-                                        <p @click="setShowRelatedLogs(logs[0].ID)">
-                                            <span v-if="showRelatedLogs[logs[0].ID]">Skjul</span> <span
-                                                v-else>Vis</span>
-                                            relatede sager ({{ logs.length - 1 }})
-                                        </p>
-                                    </div>
-                                    <li class="c-logs__log" v-if="key == 0 || showRelatedLogs[logs[0].ID]">
-                                        <div class="c-logs__log__meta">
-                                            <div class="c-logs__log__meta__left">
-                                                <div class="c-logs__log__meta__timestamp">{{ activity.CREATED_TIME }}
-                                                </div>
-                                                <div class="c-logs__log__meta__created_by">
-                                                    {{ activity.CREATED_BY }} · {{
-                                                    activity.ID
-                                                    }}
-                                                </div>
+                </div>
+                <div class="c-card__body c-card__dialog">
+                    <div class="c-loader" v-if="isLogLoading"></div>
+                    <template v-else>
+                        <h4 class="text-explainer" v-if="logsSorted.length < 1">Ingen aktivitet logget på dette
+                            nummer
+                        </h4>
+                        <h4 class="text-explainer" v-if="logsSorted.length > 0 && logsFiltered.length < 1">Ingen
+                            aktiviteter matcher din søgning</h4>
+                    </template>
+                    <div class="c-logs" :class="{'c-logs--new-log-open': isNewLogSubmitOpen}" ref="logs_container">
+                        <ul class="c-logs__chain" v-for="logs in displayedChainedLogs"
+                            :class="{'c-logs-chain--chained': logs.length > 1}">
+                            <template v-for="(activity, key) in logs" :key="activity.ID">
+                                <div class="c-logs-chain--toogle-related"
+                                    :class="{'c-logs-chain--toogle-related--open': showRelatedLogs[logs[0].ID]}"
+                                    v-if="key === 1">
+                                    <p @click="setShowRelatedLogs(logs[0].ID)">
+                                        <span v-if="showRelatedLogs[logs[0].ID]">Skjul</span> <span v-else>Vis</span>
+                                        relatede sager ({{ logs.length - 1 }})
+                                    </p>
+                                </div>
+                                <li class="c-logs__log" v-if="key == 0 || showRelatedLogs[logs[0].ID]">
+                                    <div class="c-logs__log__meta">
+                                        <div class="c-logs__log__meta__left">
+                                            <div class="c-logs__log__meta__timestamp">{{ activity.CREATED_TIME }}
                                             </div>
-                                            <div class="c-logs__log__meta__status">
-                                                <p v-if="activity.STATUS === 'Closed'">
-                                                    {{ activity.CLOSED_TIME }}
-                                                </p>
-                                                <div class="pill"
-                                                    :class="{'pill--danger': activity.STATUS === 'Closed'}">
-                                                    <template v-if="activity.STATUS === 'Closed'">
-                                                        Lukket
-                                                    </template>
-                                                    <template v-else-if="activity.STATUS === 'Open'">
-                                                        Åben
-                                                    </template>
-                                                    <template v-else>
-                                                        {{ activity.STATUS }}
-                                                    </template>
-                                                </div>
+                                            <div class="c-logs__log__meta__created_by">
+                                                {{ activity.CREATED_BY }} · {{
+                                                activity.ID
+                                                }}
                                             </div>
                                         </div>
-                                        <ul class="c-logs__log__content" v-if="activity.TYPE">
-                                            <li class="c-logs__log__content__item"><label class="c-label">Type</label>
-                                                <p>{{ activity.TYPE }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.CAT">
-                                                <label class="c-label">FORMÅL</label>
-                                                <p>{{ activity.CAT }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.REASON">
-                                                <label class="c-label">ÅRSAG</label>
-                                                <p>{{ activity.REASON }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.RESULT">
-                                                <label class="c-label">UDFALD</label>
-                                                <p>{{ activity.RESULT }}</p>
-                                            </li>
-                                            <li class="c-logs__log__content__item c-logs__log__content__item__message"
-                                                v-if="activity.MSG">
-                                                <label class="c-label c-label--top">BESKED</label>
-                                                <div class="c-logs__log__content__item__message__message">
-                                                    <p v-text="activity.MSG" v-if="activity.v_isReadMore"></p>
-                                                    <p v-text="activity.v_MsgShort" v-else></p>
-                                                    <a @click.stop.prevent="setReadMoreForItem(activity)"
-                                                        v-if="activity.v_MsgShort.length > 150">
-                                                        <template v-if="activity.v_isReadMore">Vis mindre</template>
-                                                        <template v-else>Vis mere</template>
-                                                    </a>
-                                                </div>
-                                            </li>
-                                            <li class="c-logs__log__content__item" v-if="activity.v_notes.length > 0">
-                                                <label class="c-label c-label--top">Noter</label>
-                                                <ul class="c-logs__log__notes">
-                                                    <li v-for="(cNote, key) in activity.v_notes"
-                                                        v-if="key < 2 || activity.v_isReadMoreNotes" :key="cNote.ID"
-                                                        class="c-logs__log__notes__note">
-                                                        <div class="c-logs__log__notes__note__header">
-                                                            <p>{{ cNote.CREATED_BY }}</p>
-                                                            <p>{{ cNote.TIME }}</p>
-                                                        </div>
-                                                        <div class="c-logs__log__notes__note__body">{{ cNote.MSG }}
-                                                        </div>
-                                                    </li>
-                                                    <a @click.stop.prevent="setShowMoreNotes(activity)"
-                                                        v-if="activity.v_notes.length > 2">
-                                                        <template v-if="activity.v_isReadMoreNotes">
-                                                            Vis færre noter</template>
-                                                        <template v-else>Vis flere noter</template>
-                                                    </a>
-                                                </ul>
-                                            </li>
-                                            <li class="c-logs__log__content__item c-logs__log__content__item__actions">
-                                                <label class="c-label">ACTIONS</label>
-                                                <button class="c-bttn c-bttn--secondary"
-                                                    v-for="action in activity.v_Actions"
-                                                    @click="setActionOnItem(action, activity)">
-                                                    <template v-if="action === 'related'">
-                                                        Tilføj relateret logning
-                                                    </template>
-                                                    <template v-else-if="action === 'note'">
-                                                        Tilføj note
-                                                    </template>
-                                                    <template v-else-if="action === 'close'">
-                                                        Luk sagen
-                                                    </template>
-                                                    <template v-else-if="action === 'reopen'">
-                                                        Genåben sagen
-                                                    </template>
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </template>
-                            </ul>
-                        </div>
+                                        <div class="c-logs__log__meta__status">
+                                            <p v-if="activity.STATUS === 'Closed'">
+                                                {{ activity.CLOSED_TIME }}
+                                            </p>
+                                            <div class="pill" :class="{'pill--danger': activity.STATUS === 'Closed'}">
+                                                <template v-if="activity.STATUS === 'Closed'">
+                                                    Lukket
+                                                </template>
+                                                <template v-else-if="activity.STATUS === 'Open'">
+                                                    Åben
+                                                </template>
+                                                <template v-else>
+                                                    {{ activity.STATUS }}
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="c-logs__log__content" v-if="activity.TYPE">
+                                        <li class="c-logs__log__content__item"><label class="c-label">Type</label>
+                                            <p>{{ activity.TYPE }}</p>
+                                        </li>
+                                        <li class="c-logs__log__content__item" v-if="activity.CAT">
+                                            <label class="c-label">FORMÅL</label>
+                                            <p>{{ activity.CAT }}</p>
+                                        </li>
+                                        <li class="c-logs__log__content__item" v-if="activity.REASON">
+                                            <label class="c-label">ÅRSAG</label>
+                                            <p>{{ activity.REASON }}</p>
+                                        </li>
+                                        <li class="c-logs__log__content__item" v-if="activity.RESULT">
+                                            <label class="c-label">UDFALD</label>
+                                            <p>{{ activity.RESULT }}</p>
+                                        </li>
+                                        <li class="c-logs__log__content__item c-logs__log__content__item__message"
+                                            v-if="activity.MSG">
+                                            <label class="c-label c-label--top">BESKED</label>
+                                            <div class="c-logs__log__content__item__message__message">
+                                                <p v-text="activity.MSG" v-if="activity.v_isReadMore"></p>
+                                                <p v-text="activity.v_MsgShort" v-else></p>
+                                                <a @click.stop.prevent="setReadMoreForItem(activity)"
+                                                    v-if="activity.v_MsgShort.length > 150">
+                                                    <template v-if="activity.v_isReadMore">Vis mindre</template>
+                                                    <template v-else>Vis mere</template>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <li class="c-logs__log__content__item" v-if="activity.v_notes.length > 0">
+                                            <label class="c-label c-label--top">Noter</label>
+                                            <ul class="c-logs__log__notes">
+                                                <li v-for="(cNote, key) in activity.v_notes"
+                                                    v-if="key < 2 || activity.v_isReadMoreNotes" :key="cNote.ID"
+                                                    class="c-logs__log__notes__note">
+                                                    <div class="c-logs__log__notes__note__header">
+                                                        <p>{{ cNote.CREATED_BY }}</p>
+                                                        <p>{{ cNote.TIME }}</p>
+                                                    </div>
+                                                    <div class="c-logs__log__notes__note__body">{{ cNote.MSG }}
+                                                    </div>
+                                                </li>
+                                                <a @click.stop.prevent="setShowMoreNotes(activity)"
+                                                    v-if="activity.v_notes.length > 2">
+                                                    <template v-if="activity.v_isReadMoreNotes">
+                                                        Vis færre noter</template>
+                                                    <template v-else>Vis flere noter</template>
+                                                </a>
+                                            </ul>
+                                        </li>
+                                        <li class="c-logs__log__content__item c-logs__log__content__item__actions">
+                                            <label class="c-label">ACTIONS</label>
+                                            <button class="c-bttn c-bttn--secondary"
+                                                v-for="action in activity.v_Actions"
+                                                @click="setActionOnItem(action, activity)">
+                                                <template v-if="action === 'related'">
+                                                    Tilføj relateret logning
+                                                </template>
+                                                <template v-else-if="action === 'note'">
+                                                    Tilføj note
+                                                </template>
+                                                <template v-else-if="action === 'close'">
+                                                    Luk sagen
+                                                </template>
+                                                <template v-else-if="action === 'reopen'">
+                                                    Genåben sagen
+                                                </template>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </template>
+                        </ul>
+                        <div class="c-loader" v-if="hasMoreLogs"></div>
                     </div>
                 </div>
             </div>

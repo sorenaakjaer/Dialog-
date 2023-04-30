@@ -84,9 +84,16 @@ $(document).one('trigger::vue_init', function () {
                 isRemeberValidationType: false,
                 isToastVisible: false,
                 toastMessage: '',
-                isCreatedLogItemOnLoadedCustomer: false
+                isCreatedLogItemOnLoadedCustomer: false,
+                itemsToShow: 10
             },
             computed: {
+                displayedChainedLogs() {
+                    return this.chainedLogs.slice(0, this.itemsToShow);
+                },
+                hasMoreLogs() {
+                    return this.itemsToShow < this.chainedLogs.length;
+                },
                 theMessageTemplatesFiltered() {
                     return this.theMessageTemplates.filter(template => template.TYPE === this.activeMessageType)
                 },
@@ -363,7 +370,35 @@ $(document).one('trigger::vue_init', function () {
                     return this.selectedCat && this.selectedReason && this.selectedResult
                 }
             },
+            watch: {
+                theCustomer(newVal, oldVal) {
+                    window.scrollTo(0, 0);
+                    if (newVal !== oldVal) {
+                        if (newVal) {
+                            this.updateLogs();
+                            window.addEventListener("scroll", this.handleScroll);
+                        } else {
+                            window.removeEventListener("scroll", this.handleScroll);
+                        }
+                    }
+                }
+            },
             methods: {
+                handleScroll() {
+                    const windowHeight = document.documentElement.clientHeight;
+                    const scrollTop = document.documentElement.scrollTop;
+                    const docHeight = document.documentElement.scrollHeight;
+                    if (scrollTop + windowHeight >= docHeight) {
+                        this.showMoreItems();
+                    }
+                },
+                showMoreItems() {
+                    const increment = 5; // Number of items to add
+                    this.itemsToShow += increment;
+                },
+                updateLogs() {
+                    this.itemsToShow = 10;
+                },
                 sendToast(message) {
                     this.isToastVisible = true;
                     this.toastMessage = message;
