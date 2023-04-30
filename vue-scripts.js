@@ -842,7 +842,6 @@ $(document).one('trigger::vue_init', function () {
                     this.$nextTick(_ => {
                         clear_etray_fields();
                     })
-                        this.resizeObserver.disconnect();
                 }
             },
             mounted() {
