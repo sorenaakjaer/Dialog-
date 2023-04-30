@@ -85,10 +85,15 @@ $(document).one('trigger::vue_init', function () {
                 isToastVisible: false,
                 toastMessage: '',
                 isCreatedLogItemOnLoadedCustomer: false,
-                theCardHeaderHeight: '173',
                 itemsToShow: 10
             },
             computed: {
+                displayedChainedLogs() {
+                    return this.chainedLogs.slice(0, this.itemsToShow);
+                },
+                hasMoreLogs() {
+                    return this.itemsToShow < this.chainedLogs.length;
+                },
                 theMessageTemplatesFiltered() {
                     return this.theMessageTemplates.filter(template => template.TYPE === this.activeMessageType)
                 },
@@ -357,18 +362,12 @@ $(document).one('trigger::vue_init', function () {
                     })
                     )
                 },
-                displayedChainedLogs() {
-                    return this.chainedLogs.slice(0, this.itemsToShow);
-                },
                 metaKey() {
                     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
                     return isMac ? '⌘' : 'CTRL'
                 },
                 isNewLogSubmitOpen() {
                     return this.selectedCat && this.selectedReason && this.selectedResult
-                },
-                hasMoreLogs() {
-                    return this.itemsToShow < this.chainedLogs.length;
                 }
             },
             watch: {
@@ -382,15 +381,24 @@ $(document).one('trigger::vue_init', function () {
                             window.removeEventListener("scroll", this.handleScroll);
                         }
                     }
-                    /*
-                    this.$nextTick(() => {
-                        this.disconnectResizeObserver();
-                        this.observeCardHeader();
-                    })
-                    */
                 }
             },
             methods: {
+                handleScroll() {
+                    const windowHeight = document.documentElement.clientHeight;
+                    const scrollTop = document.documentElement.scrollTop;
+                    const docHeight = document.documentElement.scrollHeight;
+                    if (scrollTop + windowHeight >= docHeight) {
+                        this.showMoreItems();
+                    }
+                },
+                showMoreItems() {
+                    const increment = 5; // Number of items to add
+                    this.itemsToShow += increment;
+                },
+                updateLogs() {
+                    this.itemsToShow = 10;
+                },
                 sendToast(message) {
                     this.isToastVisible = true;
                     this.toastMessage = message;
@@ -834,45 +842,7 @@ $(document).one('trigger::vue_init', function () {
                     this.$nextTick(_ => {
                         clear_etray_fields();
                     })
-                },
-                observeCardHeader() {
-                    if (this.$refs.cardHeader) {
-                        this.resizeObserver = new ResizeObserver(this.handleResize);
-                        this.resizeObserver.observe(this.$refs.cardHeader);
-                    }
-                },
-                disconnectResizeObserver() {
-                    if (this.resizeObserver) {
                         this.resizeObserver.disconnect();
-                        this.resizeObserver = null;
-                    }
-                },
-                handleResize(entries) {
-                    for (const entry of entries) {
-                        const height = entry.contentRect.height;
-                        this.theCardHeaderHeight = height
-                    }
-                },
-                handleScroll() {
-                    const windowHeight = document.documentElement.clientHeight;
-                    const scrollTop = document.documentElement.scrollTop;
-                    const docHeight = document.documentElement.scrollHeight;
-                    if (scrollTop + windowHeight >= docHeight) {
-                        this.showMoreItems();
-                    }
-                },
-                showMoreItems() {
-                    const increment = 5; // Number of items to add
-                    this.itemsToShow += increment;
-                },
-                updateLogs() {
-                    this.itemsToShow = 10;
-                },
-                observeBodyScroll() {
-                    window.addEventListener("scroll", this.handleScroll);
-                },
-                disconnectBodyScrollObserver() {
-                    window.removeEventListener("scroll", this.handleScroll);
                 }
             },
             mounted() {
@@ -891,11 +861,6 @@ $(document).one('trigger::vue_init', function () {
                 })
                 addEtrayCreateFormEventListeners()
                 this.readUser()
-                // this.observeCardHeader();
-            },
-            beforeDestroy() {
-                // this.disconnectResizeObserver();
-                this.disconnectBodyScrollObserver();
             }
         })
     })
