@@ -383,35 +383,16 @@ $(document).one('trigger::vue_init', function () {
                 }
             },
             methods: {
-                scrollTrigger() {
-                    const observer = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.intersectionRatio > 0) {
-                                console.log('its in dom')
-                                this.showMoreItems();
-                            }
-                        })
-                    })
-                    this.$nextTick(_ => {
-                        const el = this.$refs.infineScrollTrigger
-                        console.log({ el })
-                        if (el) {
-                            observer.observe(this.$refs.infineScrollTrigger)
-                        }
-                    })
-                },
                 updateScrollHandler() {
                     this.updateLogs();
-                    this.scrollTrigger()
-                    // window.removeEventListener("scroll", this.handleScroll);
-                    // window.addEventListener("scroll", this.handleScroll);
+                    window.removeEventListener("scroll", this.handleScroll);
+                    window.addEventListener("scroll", this.handleScroll);
                 },
                 handleScroll() {
                     const windowHeight = document.documentElement.clientHeight;
                     const scrollTop = document.documentElement.scrollTop;
                     const docHeight = document.documentElement.scrollHeight;
                     if (scrollTop + windowHeight >= docHeight) {
-                        console.log('scrolled to bottom')
                         this.showMoreItems();
                     }
                 },
@@ -761,7 +742,6 @@ $(document).one('trigger::vue_init', function () {
                     $('.get_log_options_data > a').click()
                 },
                 readCustomerLog() {
-                    console.log('readCustomerLog')
                     $('.input_customer_id > input').val(this.theCustomerId)
                     this.isLogLoading = true
                     this.observeChanges('.output_log_data', (success) => {
@@ -771,7 +751,6 @@ $(document).one('trigger::vue_init', function () {
                             this.$set(log, 'v_isReadMoreNotes', false);
                         })
                         this.isLogLoading = false
-                        console.log('logs read')
                     });
                     $('.get_log_data > a').click();
                 },
@@ -1048,8 +1027,6 @@ function submit_validation_logic() {
 
 
 function closeCreateCase() {
-    //evt.preventDefault()
-    console.log('closeCreateCase')
     $(document).trigger('trigger::etray_modal_close')
 }
 
