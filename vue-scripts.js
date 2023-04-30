@@ -382,10 +382,12 @@ $(document).one('trigger::vue_init', function () {
                             window.removeEventListener("scroll", this.handleScroll);
                         }
                     }
+                    /*
                     this.$nextTick(() => {
                         this.disconnectResizeObserver();
                         this.observeCardHeader();
                     })
+                    */
                 }
             },
             methods: {
@@ -889,10 +891,10 @@ $(document).one('trigger::vue_init', function () {
                 })
                 addEtrayCreateFormEventListeners()
                 this.readUser()
-                this.observeCardHeader();
+                // this.observeCardHeader();
             },
             beforeDestroy() {
-                this.disconnectResizeObserver();
+                // this.disconnectResizeObserver();
                 this.disconnectBodyScrollObserver();
             }
         })
