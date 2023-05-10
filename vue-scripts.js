@@ -678,7 +678,8 @@ $(document).one('trigger::vue_init', function () {
                         REASON: this.selectedReason,
                         RESULT: this.selectedResult,
                         MSG: this.selectedMessage,
-                        VALIDATION_TYPE: this.seletedValidation
+                        VALIDATION_TYPE: this.seletedValidation,
+                        GUID: this.theCustomer['GUID']
                     }]
                     $('.input_set_log_data > input').val(JSON.stringify(newLog))
                     this.isCreatedLogItemOnLoadedCustomer = true
