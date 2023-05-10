@@ -74,10 +74,9 @@ $(document).one('trigger::vue_init', function () {
                 isShowDateRangePanel: false,
                 showRelatedLogs: {},
                 validationButtonArr: [
-                    { val: 'JE', tooltip: '' },
-                    { val: '3.pkt', tooltip: '' },
-                    { val: '3 part', tooltip: '' },
-                    { val: 'Ingen val', tooltip: '' }
+                    { val: 'JE val', tooltip: 'Juridisk Ejer valideret' },
+                    { val: '3 pkt. val', tooltip: '3 pkt. valideling' },
+                    { val: 'Ingen val', tooltip: 'Kunden kunne/skulle ikke valideres' }
                 ],
                 seletedValidation: '',
                 isRemeberValidationTypeAnimate: false,
