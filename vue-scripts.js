@@ -671,6 +671,10 @@ $(document).one('trigger::vue_init', function () {
                         }, 1500)
                         return
                     }
+                    if (this.selectedMessage.length < 1) {
+                        return
+                    }                    
+                    
                     let newLog = [{
                         CUSTOMER_ID: this.theCustomerId,
                         REF_IDS: this.relatedLog,
