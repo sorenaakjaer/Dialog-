@@ -1,3 +1,7 @@
+.logMsgMissing {
+    border: 1px solid red !important;
+}
+
 [class*=hint--] {
     position: relative;
     display: inline-block
