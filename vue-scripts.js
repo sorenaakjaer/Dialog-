@@ -1,6 +1,11 @@
 $(document).one('trigger::vue_init', function () {
     console.log('trigger::vue_init')
 
+$( ".logMsg" ).on( "focus", function() {
+   $('.logMsg').removeClass('logMsgMissing')
+} );    
+    
+    
     // Register a global custom directive called `v-focus`
     Vue.directive('click-outside', {
         bind: function (el, binding, vnode) {
