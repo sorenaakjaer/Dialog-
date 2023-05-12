@@ -672,6 +672,8 @@ $(document).one('trigger::vue_init', function () {
                         return
                     }
                     if (this.selectedMessage.length < 1) {
+                        this.addClass('selectedMessageMissing')
+                        
                         return
                     }                    
                     
