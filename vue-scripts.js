@@ -672,8 +672,7 @@ $(document).one('trigger::vue_init', function () {
                         return
                     }
                     if (this.selectedMessage.length < 1) {
-                        this.addClass('selectedMessageMissing')
-                        
+                        $('.logMsg').addClass('logMsgMissing')
                         return
                     }                    
                     
@@ -707,6 +706,7 @@ $(document).one('trigger::vue_init', function () {
                     this.seletedValidation = ''
                     this.isRemeberValidationTypeAnimate = false
                     this.isRemeberValidationType = false
+                    $('.logMsg').removeClass('logMsgMissing')
                 },
                 readCustomer() {
                     if (this.theCustomerPhoneNumber.length !== 8) {
