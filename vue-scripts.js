@@ -135,7 +135,7 @@ $(document).one('trigger::vue_init', function () {
                             filteredResults.push(val)
                         }
                     }
-                    return // filteredResults.sort()
+                    return  filteredResults.sort()
                 },
                 logsDecoded() {
                     function createAShortVersionOfTheText(txt) {
