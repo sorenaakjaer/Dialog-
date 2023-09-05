@@ -329,8 +329,10 @@ $(document).one('trigger::vue_init', function () {
                         return -1;
                     }
                     this.logsFiltered.forEach(log => {
-                        console.log('log',log);
-                        const idsArr = [(log.ID).toString()].concat(log.v_RefIds)
+                        
+                        const logID = log.id ? log.id : log.ID ? log.ID : null
+                        console.log('logID',logID);
+                        const idsArr = [(logID).toString()].concat(log.v_RefIds)
                         if (logs.length === 0) {
                             logs.push(idsArr)
                         } else {
