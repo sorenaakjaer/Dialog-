@@ -99,12 +99,20 @@ $(document).one('trigger::vue_init', function () {
                 filteredCategories() {
                     const cats = []
                     this.loggingOptions.forEach(item => {
-                        const idx = cats.findIndex(cat => cat === item.CAT)
+                        const idx = cats.findIndex(cat => cat.CAT === item.CAT)
                         if (idx < 0) {
-                            cats.push(item.CAT)
+                            cats.push(item)
                         }
                     })
-                    return cats.sort()
+                    const sorted_cats = cats.sort(function(a,b){
+                        if (a.SORT_NO) {
+                            return a.SORT_NO - b.SORT_NO
+                        }
+                        else {
+                            return a.CAT - b.CAT
+                        }
+                    })
+                    return sorted_cats.map(CAT => CAT.CAT)
                 },
                 filteredReasons() {
                     if (!this.selectedCat) {
@@ -685,7 +693,7 @@ $(document).one('trigger::vue_init', function () {
                         CAT: this.selectedCat,
                         REASON: this.selectedReason,
                         RESULT: this.selectedResult,
-                        MSG: this.selectedMessage,
+                        MSG: this.seletedValidation +': '+this.selectedMessage,
                         VALIDATION_TYPE: this.seletedValidation,
                         GUID: this.theCustomer['GUID'],
                         EMAIL: this.theCustomer.CUSTOMER_EMAIL
