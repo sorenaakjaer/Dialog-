@@ -119,7 +119,7 @@ $(document).one('trigger::vue_init', function () {
                         return []
                     }
                     const filteredOptions = this.loggingOptions.filter(option => option.CAT === this.selectedCat)
-                    return filteredOptions.map(option => option.REASON)
+                    return filteredOptions.map(option => option.REASON).sort()
                 },
                 filteredResults() {
                     if (!this.selectedCat || !this.selectedReason) {
@@ -135,7 +135,7 @@ $(document).one('trigger::vue_init', function () {
                             filteredResults.push(val)
                         }
                     }
-                    return filteredResults.sort()
+                    return filteredResults//.sort()
                 },
                 logsDecoded() {
                     function createAShortVersionOfTheText(txt) {
