@@ -119,7 +119,7 @@ $(document).one('trigger::vue_init', function () {
                         return []
                     }
                     const filteredOptions = this.loggingOptions.filter(option => option.CAT === this.selectedCat)
-                    return filteredOptions.map(option => option.REASON).sort()
+                    return filteredOptions.map(option => option.REASON)
                 },
                 filteredResults() {
                     if (!this.selectedCat || !this.selectedReason) {
