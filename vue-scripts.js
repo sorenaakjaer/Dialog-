@@ -1,6 +1,4 @@
 $(document).one('trigger::vue_init', function () {
-    console.log('trigger::vue_init')
-
     // Register a global custom directive called `v-focus`
     Vue.directive('click-outside', {
         bind: function (el, binding, vnode) {
@@ -347,7 +345,6 @@ $(document).one('trigger::vue_init', function () {
                     this.logsFiltered.forEach(log => {
 
                         const logID = log.id ? log.id : log.ID ? log.ID : null
-                        //console.log('logID',logID);
                         const idsArr = [(logID).toString()].concat(log.v_RefIds)
                         if (logs.length === 0) {
                             logs.push(idsArr)
@@ -410,9 +407,7 @@ $(document).one('trigger::vue_init', function () {
                     const windowHeight = document.documentElement.clientHeight;
                     const scrollTop = document.documentElement.scrollTop;
                     const docHeight = document.documentElement.scrollHeight;
-                    console.log('onScroll', { windowHeight, scrollTop, docHeight })
                     if (((scrollTop + windowHeight) + 1) >= docHeight) {
-                        console.log('scrolled to bottom')
                         this.showMoreItems();
                     }
                 },
@@ -1135,7 +1130,6 @@ function initVue() {
     hideBlockUI()
     $("#webform").appendTo(".js-form-create-case")
     $(document).trigger("TRIGGER_SLOW_LOAD")
-    console.log('trigger::TRIGGER_SLOW_LOAD')
 }
 
 var initTimer = setTimeout(_ => {
