@@ -1,6 +1,6 @@
 $(document).one('trigger::vue_init', function () {
     console.log('trigger::vue_init')
-    
+
     // Register a global custom directive called `v-focus`
     Vue.directive('click-outside', {
         bind: function (el, binding, vnode) {
@@ -104,7 +104,7 @@ $(document).one('trigger::vue_init', function () {
                             cats.push(item)
                         }
                     })
-                    const sorted_cats = cats.sort(function(a,b){
+                    const sorted_cats = cats.sort(function (a, b) {
                         if (a.SORT_NO) {
                             return a.SORT_NO - b.SORT_NO
                         }
@@ -135,7 +135,7 @@ $(document).one('trigger::vue_init', function () {
                             filteredResults.push(val)
                         }
                     }
-                    return  filteredResults.sort()
+                    return filteredResults.sort()
                 },
                 logsDecoded() {
                     function createAShortVersionOfTheText(txt) {
@@ -337,7 +337,7 @@ $(document).one('trigger::vue_init', function () {
                         return -1;
                     }
                     this.logsFiltered.forEach(log => {
-                        
+
                         const logID = log.id ? log.id : log.ID ? log.ID : null
                         //console.log('logID',logID);
                         const idsArr = [(logID).toString()].concat(log.v_RefIds)
@@ -685,15 +685,15 @@ $(document).one('trigger::vue_init', function () {
                     if (this.selectedMessage.length < 1) {
                         $('.logMsg').addClass('logMsgMissing')
                         return
-                    }                    
-                    
+                    }
+
                     let newLog = [{
                         CUSTOMER_ID: this.theCustomerId,
                         REF_IDS: this.relatedLog,
                         CAT: this.selectedCat,
                         REASON: this.selectedReason,
                         RESULT: this.selectedResult,
-                        MSG: this.seletedValidation +': '+this.selectedMessage,
+                        MSG: this.seletedValidation + ': ' + this.selectedMessage,
                         VALIDATION_TYPE: this.seletedValidation,
                         GUID: this.theCustomer['GUID'],
                         EMAIL: this.theCustomer.CUSTOMER_EMAIL
@@ -934,10 +934,10 @@ function hideBlockUI() {
     }
 }
 
-$( ".logMsg" ).on( "focus", function() {
-   $('.logMsg').removeClass('logMsgMissing')
-} );    
-    
+$(".logMsg").on("focus", function () {
+    $('.logMsg').removeClass('logMsgMissing')
+});
+
 
 
 function CreateCase() {
