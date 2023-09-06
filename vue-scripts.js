@@ -411,7 +411,7 @@ $(document).one('trigger::vue_init', function () {
                     const scrollTop = document.documentElement.scrollTop;
                     const docHeight = document.documentElement.scrollHeight;
                     console.log('onScroll', { windowHeight, scrollTop, docHeight })
-                    if (scrollTop + windowHeight >= docHeight) {
+                    if (((scrollTop + windowHeight) + 1) >= docHeight) {
                         console.log('scrolled to bottom')
                         this.showMoreItems();
                     }
