@@ -119,7 +119,15 @@ $(document).one('trigger::vue_init', function () {
                         return []
                     }
                     const filteredOptions = this.loggingOptions.filter(option => option.CAT === this.selectedCat)
-                    return filteredOptions.map(option => option.REASON).sort()
+                    const sortedOptions = filteredOptions.sort(function (a, b) {
+                        if (a.SORT_NO) {
+                            return a.SORT_NO - b.SORT_NO
+                        }
+                        else {
+                            return a.CAT - b.CAT
+                        }
+                    })
+                    return sortedOptions.map(option => option.REASON)
                 },
                 filteredResults() {
                     if (!this.selectedCat || !this.selectedReason) {
@@ -135,7 +143,7 @@ $(document).one('trigger::vue_init', function () {
                             filteredResults.push(val)
                         }
                     }
-                    return filteredResults.sort()
+                    return filteredResults
                 },
                 logsDecoded() {
                     function createAShortVersionOfTheText(txt) {
