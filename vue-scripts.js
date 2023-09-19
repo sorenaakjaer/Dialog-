@@ -829,7 +829,8 @@ $(document).one('trigger::vue_init', function () {
                         return item.ID === activity.ID
                     })
                     console.log({ activity, idx }, 'this.logs[idx]', this.logs[idx])
-                    this.logs[idx].v_isReadMore = !this.logs[idx].v_isReadMore
+                    this.logs[idx].v_isReadMore = !activity.v_isReadMore
+                    console.log('end::this.logs[idx].v_isReadMore', this.logs[idx].v_isReadMore, activity.v_isReadMore)
                 },
                 setShowMoreNotes(activity) {
                     const idx = this.logs.findIndex(item => item.ID === activity.ID)
