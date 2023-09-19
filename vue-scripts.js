@@ -825,12 +825,11 @@ $(document).one('trigger::vue_init', function () {
                 },
                 setReadMoreForItem(activity) {
                     const idx = this.logs.findIndex(item => {
-                        console.log('item.ID', item.ID)
                         return item.ID === activity.ID
                     })
-                    console.log({ activity, idx }, 'this.logs[idx]', this.logs[idx])
-                    this.logs[idx].v_isReadMore = !activity.v_isReadMore
-                    console.log('end::this.logs[idx].v_isReadMore', this.logs[idx].v_isReadMore, activity.v_isReadMore)
+                    console.log('beforeUpdat::this.logs[idx]', this.logs[idx])
+                    this.$set(this.logs[idx], 'v_isReadMore', !activity.v_isReadMore)
+                    console.log('updated::this.logs[idx]', this.logs[idx])
                 },
                 setShowMoreNotes(activity) {
                     const idx = this.logs.findIndex(item => item.ID === activity.ID)
