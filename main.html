@@ -156,8 +156,7 @@
                                             @keydown="onNewLogTextareaKeyUp($event)" cols="50"></textarea>
                                     </div>
                                 <transition name="expand">
-                                    <div class="c-input-group__buttons"
-                                        v-if="selectedCat && selectedReason && selectedResult">
+                                    <div class="c-input-group__buttons">
                                         <div class="c-input-group__buttons__left"
                                             :class="{'shake': isRemeberValidationTypeAnimate}">
                                             <label class="c-label">
