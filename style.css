@@ -1205,6 +1205,8 @@ select {
 
 .c-header__right {
     position: relative;
+    display: flex;
+    gap: 1rem;
 }
 
 .c-header__right__hint {
