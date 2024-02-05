@@ -147,14 +147,12 @@
                                         </multiselect>
                                     </div>
                                 </div>
-                                <transition name="expand">
-                                    <div v-if="selectedResult" class="c-input-group">
+                                    <div class="c-input-group">
                                         <label class="c-label">Uddyb henvendelse og beskriv hvad du har aftalt med
                                             kunden</label>
                                         <textarea class="logMsg" v-model="selectedMessage" ref="new_log_message" rows="4"
                                             @keydown="onNewLogTextareaKeyUp($event)" cols="50"></textarea>
                                     </div>
-                                </transition>
                                 <transition name="expand">
                                     <div class="c-input-group__buttons"
                                         v-if="selectedCat && selectedReason && selectedResult">
