@@ -9,6 +9,7 @@
                 <img src="https://www.cbb.dk/static/images/CBB_logo_Tagline.svg" />
             </div>
             <div class="c-header__right">
+                <button class="c-bttn c-bttn--blue" onclick="window.open('https://etray.cbb.dk/kaldslogning', '_blank');">Opret ny log</button>
                 <transition name="fadeInTop">
                     <div v-show="user"
                         :class="{'hint--bottom hint--always hint--error': theCustomerPhoneNumberHasError}"
