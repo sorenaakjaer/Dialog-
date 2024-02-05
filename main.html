@@ -178,7 +178,7 @@
                                             <p class="text--error" v-if="isRemeberValidationType">Der skal vælges en
                                                 valideringstype</p>
                                         </div>
-                                        <div class="c-input-group__submit">
+                                        <div v-if="selectedCat && selectedReason && selectedResult class="c-input-group__submit">
                                             <button class="c-bttn c-bttn--blue" @click="closeNewLogForm"
                                                 @keydown="onNewLogTextareaKeyUp($event)">Annullér</button>
                                             <div class="hint--bottom" :aria-label="metaKey + ' + Enter'">
