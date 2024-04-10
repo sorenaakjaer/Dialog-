@@ -1101,11 +1101,11 @@ function addVueMultiSelect() {
     // Create a <link> element for the CSS file
     const link = document.createElement('link')
     link.rel = 'stylesheet'
-    link.href = 'https://cdn.jsdelivr.net/npm/vue-multiselect@latest/dist/vue-multiselect.min.css'
+    link.href = 'https://cdn.jsdelivr.net/npm/vue-multiselect@2.1.9/dist/vue-multiselect.min.css'
     document.head.appendChild(link)
 
     // Create a <script> element for the Vue Multiselect script
-    $.getScript("https://cdn.jsdelivr.net/npm/vue-multiselect@latest/dist/vue-multiselect.min.js", function (e, t, s) {
+    $.getScript("https://cdn.jsdelivr.net/npm/vue-multiselect@2.1.9/dist/vue-multiselect.min.js", function (e, t, s) {
         $(document).trigger("trigger::vue__multi_select_loaded")
     })
 }
