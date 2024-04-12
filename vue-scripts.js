@@ -1114,7 +1114,7 @@ function addVueDatePicker() {
     // Create a <link> element for the CSS file
     const link = document.createElement('link')
     link.rel = 'stylesheet'
-    link.href = 'https://unpkg.com/vue2-datepicker/index.css'
+    link.href = 'https://unpkg.com/vue2-datepicker@3.11.1/index.css'
     document.head.appendChild(link)
 
     // Create a <script> element for the Vue Multiselect script
